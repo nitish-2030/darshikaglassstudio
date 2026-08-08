@@ -262,24 +262,19 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .hero-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .hero-video{opacity:0;transition:opacity 1s var(--ease)}
 .hero-video.is-active{opacity:1}
-.hero-scrim{position:absolute;inset:0;background:
-  linear-gradient(180deg,rgba(23,19,16,0.30) 0%, rgba(23,19,16,0.14) 45%, rgba(23,19,16,0.58) 100%);
-  z-index:1;
+.hero-scrim{position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(100deg, rgba(15,12,9,0.62) 0%, rgba(15,12,9,0.38) 45%, rgba(15,12,9,0.16) 78%, rgba(15,12,9,0.08) 100%),
+    linear-gradient(180deg, rgba(15,12,9,0.30) 0%, rgba(15,12,9,0.02) 28%, rgba(15,12,9,0.08) 60%, rgba(15,12,9,0.50) 100%);
 }
 .hero-inner{position:relative;z-index:2;max-width:660px}
-.hero-glass{
-  padding:26px 22px;border-radius:20px;
-  background:linear-gradient(160deg,rgba(23,19,16,0.22),rgba(23,19,16,0.08));
-  backdrop-filter:blur(4px) saturate(115%);-webkit-backdrop-filter:blur(4px) saturate(115%);
-  border:1px solid rgba(255,255,255,0.16);
-  box-shadow:0 14px 34px rgba(0,0,0,0.22);
-}
-@media(min-width:640px){.hero-glass{padding:44px 46px}}
 .hero .eyebrow{color:var(--gold-light)}
-.hero h1{font-size:clamp(2.2rem,6vw,3.75rem);letter-spacing:-0.01em;color:#fff}
+.hero h1{font-size:clamp(2.2rem,6vw,3.75rem);letter-spacing:-0.01em;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,0.35)}
 .hero h1 em{font-style:italic;color:var(--gold-light)}
-.hero p.lead{margin-top:20px;font-size:1.05rem;color:#E6E1D8;max-width:52ch}
+.hero p.lead{margin-top:20px;font-size:1.05rem;color:#EDEAE2;max-width:52ch;text-shadow:0 1px 12px rgba(0,0,0,0.3)}
 .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
+.hero .hero-actions .btn{flex:1 1 0;min-width:0}
+@media(min-width:480px){.hero .hero-actions .btn{flex:0 1 auto}}
 
 .trust-bar{
   position:relative;z-index:3;margin-top:-46px;
@@ -384,46 +379,79 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .about-grid{grid-template-columns:0.85fr 1fr;gap:70px}
 }
 
-/* ============================= SERVICES (signature list) ============================= */
-.services-list{border-top:1px solid var(--line)}
+/* ============================= SERVICES (visual list) ============================= */
+.services-banner{
+  position:relative;border-radius:var(--radius-lg);
+  overflow:hidden;aspect-ratio:16/7;box-shadow:var(--shadow-md);margin-bottom:28px;
+}
+.services-banner .facet-tile{position:absolute;inset:0;z-index:0}
+.services-banner__img{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover}
+.services-banner::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(100deg,rgba(15,12,9,0.42) 0%,rgba(15,12,9,0.05) 55%);
+}
+@media(min-width:1024px){.services-banner{aspect-ratio:16/4.6}}
+
+.services-list{display:flex;flex-direction:column;gap:10px}
 .service-row{
   position:relative;
-  display:flex;gap:18px;align-items:flex-start;
-  padding:26px 0 26px 16px;border-bottom:1px solid var(--line);
-  transition:padding-left .4s var(--ease);
+  display:flex;align-items:center;gap:12px;
+  padding:10px;border-radius:var(--radius-md);
+  background:var(--bg);border:1px solid var(--line);
+  box-shadow:var(--shadow-sm);cursor:pointer;
+  transition:box-shadow .35s var(--ease),transform .35s var(--ease),border-color .35s var(--ease);
 }
-.service-row::before{
-  content:"";position:absolute;left:0;top:10%;bottom:10%;width:3px;border-radius:3px;
-  background:var(--gold);transform:scaleY(0);transform-origin:top;transition:transform .4s var(--ease);
+.service-row:active{transform:scale(0.98)}
+@media(hover:hover){
+  .service-row:hover{box-shadow:var(--shadow-md);border-color:var(--line-strong);transform:translateY(-2px)}
 }
-.service-row:hover::before{transform:scaleY(1)}
-.service-row:hover{padding-left:22px}
-.service-row__thumb-mobile{
-  width:64px;height:64px;border-radius:14px;flex-shrink:0;overflow:hidden;box-shadow:var(--shadow-sm);
+.service-row__thumb-mobile{position:relative;width:72px;height:72px;flex-shrink:0;border-radius:12px;overflow:hidden}
+.service-row__thumb-mobile img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover}
+.service-row__thumb-mobile .glyph{z-index:0}
+.service-row__thumb-mobile .glyph .icon{width:38%;height:38%}
+.service-row__num-badge{
+  position:absolute;top:6px;left:6px;z-index:2;width:20px;height:20px;border-radius:50%;
+  background:rgba(15,12,9,0.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:.62rem;font-weight:600;color:var(--gold-light);
 }
 .service-row__num{display:none}
 .service-row__body{flex:1;min-width:0}
-.service-row__body .tag{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600}
-.service-row__body h3{font-size:1.18rem;margin:6px 0 8px}
-.service-row__body p{color:var(--text-muted);font-size:.92rem;max-width:52ch}
-.service-row__cta{margin-top:14px}
+.service-row__body .tag{display:none}
+.service-row__body h3{font-size:.98rem;margin:0 0 4px;line-height:1.22}
+.service-row__body p{
+  color:var(--text-muted);font-size:.8rem;line-height:1.4;max-width:none;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.service-row__cta{display:none}
+.service-row__chevron{
+  flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--bg-soft);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);
+  transition:background .3s,color .3s,transform .3s;
+}
+.service-row__chevron .icon{width:13px;height:13px}
+@media(hover:hover){.service-row:hover .service-row__chevron{background:var(--gold);color:#fff;transform:translateX(2px)}}
 .service-row__float{display:none}
 
 @media(min-width:1024px){
+  .services-list{display:block;gap:0;border-top:1px solid var(--line)}
   .service-row{
-    align-items:center;padding:34px 0;cursor:pointer;
-    transition:background-color .4s var(--ease);
+    border-radius:0;background:transparent;border:none;border-bottom:1px solid var(--line);
+    box-shadow:none;padding:34px 0;align-items:center;
   }
-  .service-row:hover{background:var(--bg-soft)}
-  .service-row:hover .service-row__num{color:var(--gold)}
+  .service-row:hover{transform:none;box-shadow:none;background:var(--bg-soft)}
   .service-row__thumb-mobile{display:none}
   .service-row__num{
     display:block;font-family:'Fraunces',serif;font-size:2.6rem;font-weight:600;
     color:rgba(11,31,51,0.14);width:90px;flex-shrink:0;transition:color .4s var(--ease);
   }
+  .service-row:hover .service-row__num{color:var(--gold)}
   .service-row__body{display:flex;align-items:center;justify-content:space-between;gap:40px}
-  .service-row__body h3{margin:0 0 6px}
-  .service-row__cta{margin-top:0;flex-shrink:0}
+  .service-row__body .tag{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .service-row__body h3{font-size:1.18rem;margin:6px 0 8px}
+  .service-row__body p{-webkit-line-clamp:unset;display:block;overflow:visible;max-width:52ch;font-size:.92rem}
+  .service-row__cta{display:inline-flex;margin-top:0;flex-shrink:0}
+  .service-row__chevron{display:none}
   .service-row__float{
     display:block;position:absolute;right:8%;bottom:calc(100% - 6px);
     width:180px;height:130px;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-lg);
@@ -434,18 +462,39 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 }
 
 /* ============================= WHY CHOOSE (dark checklist band) ============================= */
-.why-grid{display:grid;gap:48px}
+.why-grid{display:grid;gap:36px}
 .why-lede h2{color:#fff;font-size:clamp(1.8rem,4vw,2.5rem)}
 .why-lede p{color:#B9C2CE;margin-top:16px;max-width:44ch}
-.why-list{display:flex;flex-direction:column}
-.why-list li{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.12)}
-.why-list li:first-child{padding-top:0}
-.why-check{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.why-check .icon{width:13px;height:13px}
-.why-list strong{display:block;font-size:1rem;color:#fff;font-weight:600;margin-bottom:3px}
-.why-list span{font-size:.87rem;color:#AEB8C4}
+.why-list{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid rgba(255,255,255,0.14);border-left:1px solid rgba(255,255,255,0.14);
+}
+.why-list li{
+  display:flex;flex-direction:column;gap:8px;padding:16px 14px;
+  border-right:1px solid rgba(255,255,255,0.14);border-bottom:1px solid rgba(255,255,255,0.14);
+  transition:background-color .3s var(--ease);
+}
+@media(hover:hover){.why-list li:hover{background:rgba(255,255,255,0.035)}}
+.why-check{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.why-check .icon{width:12px;height:12px}
+.why-list strong{display:block;font-size:.88rem;color:#fff;font-weight:600;line-height:1.25}
+.why-list span{font-size:.76rem;line-height:1.4;color:#AEB8C4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
-@media(min-width:900px){.why-grid{grid-template-columns:0.8fr 1fr;gap:80px}}
+@media(min-width:640px){
+  .why-list li{padding:20px 18px}
+  .why-list strong{font-size:.94rem}
+  .why-list span{font-size:.8rem}
+}
+@media(min-width:900px){
+  .why-grid{grid-template-columns:0.8fr 1fr;gap:80px}
+  .why-list{display:flex;flex-direction:column;border:none}
+  .why-list li{flex-direction:row;gap:16px;padding:18px 0;border:none;border-bottom:1px solid rgba(255,255,255,0.12)}
+  .why-list li:first-child{padding-top:0}
+  .why-list li:hover{background:none}
+  .why-check{margin-top:2px}
+  .why-list strong{font-size:1rem;margin-bottom:3px}
+  .why-list span{font-size:.87rem;-webkit-line-clamp:unset;overflow:visible}
+}
 
 /* ============================= GALLERY ============================= */
 .filter-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
@@ -534,34 +583,70 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 @media(min-width:768px){.lightbox-prev{left:-56px}.lightbox-next{right:-56px}}
 
 /* ============================= PROCESS ============================= */
-.process-list{display:flex;flex-direction:column;gap:0;position:relative}
-.process-list::before{content:"";position:absolute;left:29px;top:8px;bottom:8px;width:2px;background:repeating-linear-gradient(to bottom,var(--line-strong) 0 6px,transparent 6px 12px)}
-.process-item{display:flex;gap:22px;padding-block:22px;position:relative;align-items:flex-start}
+.process-section{
+  position:relative;isolation:isolate;overflow:hidden;color:#EDEAE2;
+}
+.process-section__bg{
+  position:absolute;inset:0;z-index:-2;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  transform:scale(1.02);
+}
+.process-section::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(17,14,10,0.92) 0%,rgba(17,14,10,0.80) 38%,rgba(17,14,10,0.90) 100%),
+    radial-gradient(120% 90% at 50% 0%,rgba(174,138,61,0.14),transparent 60%);
+}
+.process-section .eyebrow{color:var(--gold-light)}
+.process-section .eyebrow::before{background:var(--gold-light)}
+.process-section .section-head h2{color:#fff}
+.process-section .section-head p{color:#C9C2B4;margin-top:10px}
+
+.process-list{list-style:none;position:relative;display:flex;flex-direction:column}
+.process-list::before{
+  content:"";position:absolute;left:27px;top:6px;bottom:6px;width:2px;
+  background:repeating-linear-gradient(to bottom,rgba(220,188,124,0.4) 0 6px,transparent 6px 12px);
+}
+.process-item{display:flex;gap:18px;padding-block:18px;position:relative;align-items:flex-start}
 .process-visual{position:relative;flex-shrink:0}
 .process-icon{
-  width:60px;height:60px;border-radius:50%;position:relative;z-index:1;
-  background:linear-gradient(155deg,rgba(174,138,61,0.14),rgba(174,138,61,0.03));
-  border:1.5px solid rgba(174,138,61,0.35);color:var(--gold);
-  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);
+  width:54px;height:54px;border-radius:50%;position:relative;z-index:1;
+  background:rgba(255,255,255,0.06);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1.5px solid rgba(220,188,124,0.45);color:var(--gold-light);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.35);
   transition:transform .4s var(--ease),box-shadow .4s var(--ease),background .4s var(--ease);
 }
-.process-icon .icon{width:26px;height:26px}
+.process-icon .icon{width:23px;height:23px}
 .process-num{
-  position:absolute;right:-3px;bottom:-3px;width:24px;height:24px;border-radius:50%;z-index:2;
-  background:var(--navy);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:.72rem;
-  display:flex;align-items:center;justify-content:center;border:2px solid var(--bg-soft);box-shadow:var(--shadow-sm);
+  position:absolute;right:-3px;bottom:-3px;width:21px;height:21px;border-radius:50%;z-index:2;
+  background:var(--gold);color:var(--navy);font-family:'Fraunces',serif;font-weight:700;font-size:.66rem;
+  display:flex;align-items:center;justify-content:center;border:2px solid rgba(17,14,10,0.9);box-shadow:0 2px 8px rgba(0,0,0,0.4);
 }
-.process-item:hover .process-icon{transform:translateY(-3px) scale(1.06);box-shadow:var(--shadow-md);background:linear-gradient(155deg,rgba(174,138,61,0.24),rgba(174,138,61,0.06))}
-.process-body{padding-top:8px}
-.process-body h3{font-size:1.08rem;margin-bottom:6px}
-.process-body p{color:var(--text-muted);font-size:.9rem;max-width:44ch}
+.process-item:hover .process-icon{transform:translateY(-3px) scale(1.06);box-shadow:0 12px 30px rgba(0,0,0,0.45);background:rgba(220,188,124,0.14)}
+.process-body{padding-top:5px}
+.process-body h3{font-size:1rem;margin-bottom:4px;color:#fff}
+.process-body p{color:#C9C2B4;font-size:.85rem;line-height:1.45;max-width:44ch}
+
+/* Zig-zag timeline: alternating sides of a centred line once there's room for it */
+@media(min-width:600px) and (max-width:1023px){
+  .process-list::before{left:50%;transform:translateX(-50%)}
+  .process-item{
+    display:grid;grid-template-columns:1fr 54px 1fr;column-gap:26px;
+    align-items:start;padding-block:24px;
+  }
+  .process-visual{grid-column:2;justify-self:center}
+  .process-body{grid-column:3;padding-top:6px}
+  .process-body p{max-width:30ch}
+  .process-item:nth-child(even) .process-body{grid-column:1;text-align:right;margin-left:auto}
+  .process-item:nth-child(even) .process-body p{margin-left:auto}
+}
 
 @media(min-width:1024px){
-  .process-list{flex-direction:row;justify-content:space-between}
-  .process-list::before{left:5%;right:5%;top:30px;bottom:auto;width:auto;height:2px}
-  .process-item{flex-direction:column;text-align:center;align-items:center;flex:1;padding-inline:10px}
+  .process-list{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:0}
+  .process-list::before{left:5%;right:5%;top:27px;bottom:auto;width:auto;height:2px}
+  .process-item{flex-direction:column;text-align:center;align-items:center;flex:1;padding-inline:10px;padding-block:0}
   .process-body{padding-top:0;margin-top:18px}
-  .process-body p{max-width:26ch}
+  .process-body p{max-width:24ch}
 }
 
 /* ============================= FAQ ============================= */
@@ -803,15 +888,12 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   </div>
   <div class="hero-scrim" aria-hidden="true"></div>
   <div class="container hero-inner reveal" id="heroReveal">
-    <div class="hero-glass">
-      <p class="eyebrow">Glass &amp; Interior Studio &middot; Sidhi, Madhya Pradesh</p>
-      <h1>Premium Glass &amp; <em>Interior</em> Solutions</h1>
-      <p class="lead">Transforming homes and commercial spaces with quality craftsmanship — glass, aluminium, mirrors, wallpaper, furniture and false ceiling work, done right and finished on time.</p>
-      <div class="hero-actions">
-        <a href="tel:+919755054649" class="btn btn-gold"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Call Now</a>
-        <a href="https://wa.me/919755054649?text=Hi%20Darshika%20Glass%20Studio%2C%20I%27d%20like%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener" class="btn btn-outline"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>WhatsApp</a>
-        <a href="#contact" class="btn btn-outline">Get Free Quote</a>
-      </div>
+    <p class="eyebrow">Glass &amp; Interior Studio &middot; Sidhi, Madhya Pradesh</p>
+    <h1>Premium Glass &amp; <em>Interior</em> Solutions</h1>
+    <p class="lead">Transforming homes and commercial spaces with quality craftsmanship — glass, aluminium, mirrors, wallpaper, furniture and false ceiling work, done right and finished on time.</p>
+    <div class="hero-actions">
+      <a href="tel:+919755054649" class="btn btn-gold"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Call Now</a>
+      <a href="https://wa.me/919755054649?text=Hi%20Darshika%20Glass%20Studio%2C%20I%27d%20like%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener" class="btn btn-outline"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>WhatsApp</a>
     </div>
   </div>
 </section>
@@ -854,18 +936,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 <!-- ============================= ABOUT ============================= -->
 <section class="section" id="about">
   <div class="container about-grid">
-    <!-- <div class="about-visual reveal">
-      <div class="glass-pane p1" aria-hidden="true"></div>
-      <div class="glass-pane p2" aria-hidden="true"></div>
-      <div class="facet-tile">
-        <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <polygon points="0,300 160,80 260,140 400,0 400,300" fill="#221C15"/>
-          <polygon points="160,80 260,140 210,300 90,300" fill="#1C160F"/>
-          <g stroke="#AE8A3D" stroke-opacity="0.4" stroke-width="1"><path d="M0 300L160 80L260 140L400 0"/><path d="M90 300L210 300L260 140"/></g>
-        </svg>
-        <div class="glyph"><svg class="icon" aria-hidden="true"><use href="#i-interior"/></svg></div>
-      </div> 
-    </div> -->
+   
     <div class="about-text reveal">
       <p class="eyebrow">About the Studio</p>
       <h2>Built on craftsmanship, run like a workshop.</h2>
@@ -894,6 +965,13 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
       <p>Seven trades, one studio. Tap any line for details, or call us to talk through your space.</p>
     </div>
 
+    <div class="services-banner reveal">
+      <div class="facet-tile" aria-hidden="true">
+        <div class="glyph"><svg class="icon" aria-hidden="true"><use href="#i-interior"/></svg></div>
+      </div>
+      <img class="services-banner__img" src="assets/services/services-banner.jpg" alt="Recent glass and interior fit-out by Darshika Glass Studio" loading="lazy" onerror="this.style.display='none'">
+    </div>
+
     <div class="services-list reveal" id="servicesList">
       <!-- rows injected structurally below -->
     </div>
@@ -912,12 +990,12 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
       </div>
     </div>
     <ul class="why-list reveal">
-      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Quality Materials</strong><span>We use trusted brands and proper-grade materials, not the cheapest option available.</span></div></li>
-      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Skilled Installation</strong><span>Fitted by people who work with glass and aluminium every day, not general labour.</span></div></li>
-      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Custom Designs</strong><span>Every space is measured and planned on site — nothing is off-the-shelf.</span></div></li>
-      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Affordable Pricing</strong><span>Fair, transparent pricing with no hidden costs after the work begins.</span></div></li>
-      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Timely Delivery</strong><span>We agree a timeline upfront and keep you updated if anything changes.</span></div></li>
-      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Customer Satisfaction</strong><span>We're a small studio — our name depends on you being happy with the result.</span></div></li>
+      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Quality Materials</strong><span>Trusted brands and proper-grade materials — never the cheapest option.</span></div></li>
+      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Skilled Installation</strong><span>Fitted by specialists who work glass and aluminium every day.</span></div></li>
+      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Custom Designs</strong><span>Every space measured and planned on site — nothing off-the-shelf.</span></div></li>
+      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Affordable Pricing</strong><span>Fair, transparent pricing with no hidden costs.</span></div></li>
+      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Timely Delivery</strong><span>Timeline agreed upfront, with updates if anything changes.</span></div></li>
+      <li><div class="why-check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></div><div><strong>Customer Satisfaction</strong><span>A small studio — our name depends on you being happy.</span></div></li>
     </ul>
   </div>
 </section>
@@ -945,12 +1023,15 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 </section>
 
 <!-- ============================= PROCESS ============================= -->
-<section class="section section-soft" id="process">
+<section class="section process-section" id="process">
+  <div class="process-section__bg" style="background-image:url('assets/process/process-visual.jpg')" aria-hidden="true"></div>
   <div class="container">
     <div class="section-head center reveal" style="margin-inline:auto">
       <p class="eyebrow" style="justify-content:center">Working Process</p>
       <h2>From First Call to Finished Job</h2>
+      <p>See how a project comes together, start to finish</p>
     </div>
+
     <ol class="process-list reveal">
       <li class="process-item">
         <div class="process-visual"><div class="process-icon"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></div><span class="process-num">1</span></div>
@@ -1144,21 +1225,23 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   "use strict";
 
   /* ---------- Data ---------- */
+  /* Service thumbnails: drop real photos into /assets/services/ using the filenames below
+     (square/near-square, ~600x600px, optimised jpg). Falls back to a placeholder tile if missing. */
   var SERVICES = [
-    {icon:'i-glass', tag:'01', title:'All Type Glass Work', cat:'glass',
-      desc:'Toughened glass partitions, shower cubicles, tabletops and windows — cut and fitted to size for a clean, precise finish.'},
-    {icon:'i-aluminium', tag:'02', title:'Aluminium Work', cat:'aluminium',
-      desc:'Aluminium doors, windows and section work built for durability and a smooth, modern look.'},
-    {icon:'i-mirror', tag:'03', title:'Digital Mirror', cat:'mirrors',
-      desc:'Printed and LED-lit digital mirrors that add a modern focal point to living rooms, salons and bedrooms.'},
-    {icon:'i-wallpaper', tag:'04', title:'Wallpaper Installation', cat:'interior',
-      desc:'Wall coverings installed smoothly and evenly, from textured finishes to bold statement patterns.'},
-    {icon:'i-interior', tag:'05', title:'Interior Work', cat:'interior',
-      desc:'Room layouts, partitions and finishing work planned around how the space will actually be used.'},
-    {icon:'i-furniture', tag:'06', title:'Furniture Work', cat:'interior',
-      desc:'Custom wardrobes, cabinets and modular furniture built to fit your space exactly.'},
-    {icon:'i-ceiling', tag:'07', title:'PVC False Ceiling', cat:'ceiling',
-      desc:'Moisture-resistant false ceilings with clean lines and integrated lighting layouts.'}
+    {icon:'i-glass', tag:'01', title:'All Type Glass Work', cat:'glass', img:'assets/services/glass-work.jpg',
+      desc:'Toughened partitions, shower cubicles, tabletops and windows — cut and fitted for a precise finish.'},
+    {icon:'i-aluminium', tag:'02', title:'Aluminium Work', cat:'aluminium', img:'assets/services/aluminium-work.jpg',
+      desc:'Doors, windows and section work built for durability and a smooth, modern look.'},
+    {icon:'i-mirror', tag:'03', title:'Digital Mirror', cat:'mirrors', img:'assets/services/digital-mirror.jpg',
+      desc:'Printed and LED-lit mirrors that add a modern focal point to any room.'},
+    {icon:'i-wallpaper', tag:'04', title:'Wallpaper Installation', cat:'interior', img:'assets/services/wallpaper.jpg',
+      desc:'Wall coverings installed smoothly and evenly, from textures to bold patterns.'},
+    {icon:'i-interior', tag:'05', title:'Interior Work', cat:'interior', img:'assets/services/interior-work.jpg',
+      desc:'Room layouts and finishing work planned around how the space is actually used.'},
+    {icon:'i-furniture', tag:'06', title:'Furniture Work', cat:'interior', img:'assets/services/furniture-work.jpg',
+      desc:'Custom wardrobes, cabinets and modular furniture built to fit your space.'},
+    {icon:'i-ceiling', tag:'07', title:'PVC False Ceiling', cat:'ceiling', img:'assets/services/false-ceiling.jpg',
+      desc:'Moisture-resistant ceilings with clean lines and integrated lighting.'}
   ];
 
   /* DEMO DATA — replace src paths with your real photos/clips in /assets/work/.
@@ -1262,12 +1345,17 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
     var row = el('div','service-row');
     row.setAttribute('data-index', i);
     row.innerHTML =
-      '<div class="service-row__thumb-mobile facet-tile"><div class="glyph"><svg class="icon" aria-hidden="true"><use href="#'+s.icon+'"/></svg></div></div>'+
+      '<div class="service-row__thumb-mobile facet-tile">'+
+        '<div class="glyph"><svg class="icon" aria-hidden="true"><use href="#'+s.icon+'"/></svg></div>'+
+        '<img src="'+s.img+'" alt="'+s.title+'" loading="lazy" onerror="this.style.display=\'none\'">'+
+        '<span class="service-row__num-badge">'+s.tag+'</span>'+
+      '</div>'+
       '<span class="service-row__num">'+s.tag+'</span>'+
       '<div class="service-row__body">'+
         '<div><p class="tag">'+s.tag+'</p><h3>'+s.title+'</h3><p>'+s.desc+'</p></div>'+
         '<button type="button" class="text-link service-row__cta">Learn More <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>'+
       '</div>'+
+      '<span class="service-row__chevron" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span>'+
       '<div class="service-row__float facet-tile"><div class="glyph"><svg class="icon" aria-hidden="true"><use href="#'+s.icon+'"/></svg></div></div>';
     row.addEventListener('click', function(){ openServiceModal(i); });
     servicesList.appendChild(row);
