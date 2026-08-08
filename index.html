@@ -496,7 +496,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .why-list span{font-size:.87rem;-webkit-line-clamp:unset;overflow:visible}
 }
 
-/* ============================= GALLERY ============================= */
+/* ============================= FEATURED PROJECTS ============================= */
 .filter-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px}
 .filter-btn{
   position:relative;overflow:hidden;
@@ -518,47 +518,55 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   box-shadow:0 6px 16px rgba(174,138,61,0.32), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -4px 8px rgba(90,66,20,0.18);
 }
 
+/* Asymmetric masonry: CSS columns + varied aspect ratios so real photos read as
+   a curated wall of work rather than a uniform grid. */
 .gallery-grid{column-count:2;column-gap:12px}
 @media(min-width:640px){.gallery-grid{column-count:2;column-gap:20px}}
 @media(min-width:1100px){.gallery-grid{column-count:3}}
-.gallery-item{margin-bottom:12px}
-@media(min-width:640px){.gallery-item{margin-bottom:20px}}
 
 .gallery-item{
-  break-inside:avoid;margin-bottom:20px;border-radius:var(--radius-md);overflow:hidden;
-  position:relative;box-shadow:var(--shadow-sm);cursor:pointer;
+  break-inside:avoid;margin-bottom:12px;border-radius:var(--radius-md);overflow:hidden;
+  position:relative;box-shadow:var(--shadow-sm);cursor:pointer;background:var(--navy);
   transition:opacity .35s var(--ease),transform .35s var(--ease),box-shadow .4s var(--ease);
 }
-.gallery-item::before{
+@media(min-width:640px){.gallery-item{margin-bottom:20px}}
+.gallery-item.hide{opacity:0;transform:scale(.94);position:absolute;pointer-events:none;visibility:hidden}
+@media(hover:hover){
+  .gallery-item:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+}
+
+/* project-media: the reusable image unit — swap `image`, `title`, `category`,
+   `location` in the PROJECTS array below and this renders automatically. */
+.project-media{position:relative;width:100%;height:100%}
+.gallery-item.h-tall .project-media{aspect-ratio:3/4.2}
+.gallery-item.h-wide .project-media{aspect-ratio:4/2.9}
+.gallery-item.h-square .project-media{aspect-ratio:1/1}
+.gallery-item.h-med .project-media{aspect-ratio:3/3.6}
+.project-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+@media(hover:hover){.gallery-item:hover .project-media img{transform:scale(1.06)}}
+.project-media::before{
   content:"";position:absolute;top:0;left:-65%;width:35%;height:100%;z-index:3;pointer-events:none;
   background:linear-gradient(100deg,transparent,rgba(255,255,255,0.4),transparent);
   transform:skewX(-16deg);transition:left .75s var(--ease);
 }
-@media(hover:hover){.gallery-item:hover::before{left:135%}}
-.gallery-item:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
-.gallery-item.hide{opacity:0;transform:scale(.94);position:absolute;pointer-events:none;visibility:hidden}
-.gallery-item .facet-tile{width:100%}
-.gallery-item.h-tall .facet-tile{aspect-ratio:3/4.2}
-.gallery-item.h-wide .facet-tile{aspect-ratio:4/2.9}
-.gallery-item.h-square .facet-tile{aspect-ratio:1/1}
-.gallery-item.h-med .facet-tile{aspect-ratio:3/3.6}
+@media(hover:hover){.gallery-item:hover .project-media::before{left:135%}}
+/* Graceful fallback until a real photo is added at the given path */
+.gallery-item.img-missing .project-media{background:linear-gradient(155deg,rgba(174,138,61,0.22),rgba(23,19,16,0.94))}
+.gallery-item.img-missing .project-media img{display:none}
 
-.gallery-item .glyph .icon{transition:transform .5s var(--ease)}
-.gallery-item:hover .glyph .icon{transform:scale(1.08)}
-.gallery-item .zoom-hint{
-  position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;
+.project-media .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:14px 16px;background:linear-gradient(to top,rgba(23,19,16,0.85),transparent 65%);display:flex;flex-direction:column;gap:2px}
+.project-media .cap-tag{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:600}
+.project-media .cap-title{color:#fff;font-family:'Fraunces',serif;font-size:.98rem;line-height:1.3}
+
+.project-media .zoom-hint{
+  position:absolute;top:14px;right:14px;z-index:2;width:36px;height:36px;border-radius:50%;
   background:rgba(255,255,255,0.16);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.35);
   color:#fff;display:flex;align-items:center;justify-content:center;
   opacity:0;transform:scale(.8);transition:all .3s var(--ease);
 }
-.gallery-item:hover .zoom-hint{opacity:1;transform:scale(1)}
-.gallery-item .zoom-hint .icon{width:16px;height:16px}
-.gallery-item .play-hint{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-}
-.play-hint span{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,0.14);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .35s var(--ease)}
-.gallery-item:hover .play-hint span{transform:scale(1.08)}
-.play-hint .icon{width:20px;height:20px;margin-left:3px}
+@media(hover:hover){.gallery-item:hover .zoom-hint{opacity:1;transform:scale(1)}}
+@media(hover:none){.project-media .zoom-hint{opacity:1;transform:scale(1);background:rgba(255,255,255,0.1)}}
+.project-media .zoom-hint .icon{width:16px;height:16px}
 
 .gallery-loadmore{display:flex;justify-content:center;margin-top:8px}
 
@@ -570,7 +578,13 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 }
 .lightbox.open{opacity:1;visibility:visible;transition:opacity .35s var(--ease)}
 .lightbox-body{position:relative;width:100%;max-width:640px}
-.lightbox-body .facet-tile{border-radius:var(--radius-lg);aspect-ratio:4/3;box-shadow:var(--shadow-lg)}
+.lightbox-media{position:relative;border-radius:var(--radius-lg);overflow:hidden;aspect-ratio:4/3;box-shadow:var(--shadow-lg);background:var(--navy)}
+.lightbox-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lightbox-media.img-missing{background:linear-gradient(155deg,rgba(174,138,61,0.22),rgba(23,19,16,0.94))}
+.lightbox-media.img-missing img{display:none}
+.lightbox-media .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(to top,rgba(11,31,51,0.72),transparent);display:flex;flex-direction:column;gap:2px}
+.lightbox-media .cap-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:600}
+.lightbox-media .cap-title{color:#fff;font-family:'Fraunces',serif;font-size:1rem}
 .lightbox-close,.lightbox-prev,.lightbox-next{
   position:absolute;color:#fff;width:44px;height:44px;border-radius:50%;
   background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);
@@ -1000,13 +1014,13 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   </div>
 </section>
 
-<!-- ============================= GALLERY ============================= -->
+<!-- ============================= FEATURED PROJECTS ============================= -->
 <section class="section" id="gallery">
   <div class="container">
     <div class="section-head reveal">
-      <p class="eyebrow">Project Gallery</p>
-      <h2>A Look at Our Work</h2>
-      <p>Placeholder visuals for now — this section is built to drop your real project photos straight in.</p>
+      <p class="eyebrow">Featured Projects</p>
+      <h2>Completed Work, In Real Spaces</h2>
+      <p>A selection of finished jobs — glass, aluminium, mirrors, interior and ceiling work, installed for real homes and shops.</p>
     </div>
 
     <div class="filter-row reveal" id="filterRow">
@@ -1212,8 +1226,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   <div class="lightbox-body">
     <button class="lightbox-close" id="lbClose" aria-label="Close"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
     <button class="lightbox-prev" id="lbPrev" aria-label="Previous"><svg class="icon" aria-hidden="true"><use href="#i-arrow" style="transform:rotate(180deg)"/></svg></button>
-    <div class="facet-tile" id="lbTile">
-      <div class="glyph"><svg class="icon" id="lbIcon" aria-hidden="true"><use href="#i-glass"/></svg></div>
+    <div class="lightbox-media" id="lbTile">
+      <img id="lbImage" src="" alt="" onerror="this.closest('.lightbox-media').classList.add('img-missing')">
       <div class="cap"><span class="cap-tag" id="lbTag">Glass</span><span class="cap-title" id="lbTitle">Project</span></div>
     </div>
     <button class="lightbox-next" id="lbNext" aria-label="Next"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
@@ -1255,19 +1269,32 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
     {type:'video', src:'assets/work/clip-6-web.mp4', poster:'assets/work/clip-6-poster.webp', tag:'Interior', title:'Wave Fountain'}
   ];
 
-  var GALLERY = [
-    {icon:'i-glass', cat:'glass', tag:'Glass', title:'Living Room Partition', size:'h-tall'},
-    {icon:'i-aluminium', cat:'aluminium', tag:'Aluminium', title:'Shopfront Frame', size:'h-square'},
-    {icon:'i-mirror', cat:'mirrors', tag:'Mirrors', title:'Bedroom Feature Wall', size:'h-med'},
-    {icon:'i-interior', cat:'interior', tag:'Interior', title:'Office Cabin Layout', size:'h-wide'},
-    {icon:'i-ceiling', cat:'ceiling', tag:'Ceiling', title:'PVC False Ceiling', size:'h-square'},
-    {icon:'i-glass', cat:'glass', tag:'Glass', title:'Shower Cubicle', size:'h-med', video:true},
-    {icon:'i-furniture', cat:'interior', tag:'Interior', title:'Modular Wardrobe', size:'h-tall'},
-    {icon:'i-aluminium', cat:'aluminium', tag:'Aluminium', title:'Balcony Window', size:'h-wide'},
-    {icon:'i-mirror', cat:'mirrors', tag:'Mirrors', title:'Salon Digital Mirror', size:'h-square'},
-    {icon:'i-wallpaper', cat:'interior', tag:'Interior', title:'Accent Wallpaper', size:'h-med'},
-    {icon:'i-ceiling', cat:'ceiling', tag:'Ceiling', title:'Gypsum + LED Cove', size:'h-tall', video:true},
-    {icon:'i-glass', cat:'glass', tag:'Glass', title:'Staircase Railing', size:'h-wide'}
+  /* ---------- Featured Projects data ----------
+     This is the ONLY thing you touch to add a new project photo.
+     Add a new object to this array — no layout/markup changes needed.
+
+     Fields:
+       image     required — path to the photo (see /assets/projects/)
+       title     required — short project or service name
+       category  required — must match a filter button: Glass, Interior,
+                             Mirrors, Aluminium or Ceiling
+       location  optional — e.g. "Sidhi" — omit or leave "" to hide it
+
+     The masonry tile shape (tall/wide/square/medium) is assigned
+     automatically based on position, so you never need to touch CSS. */
+  var PROJECTS = [
+    {image:'assets/projects/glass-partition-living-room.jpg', title:'Living Room Partition', category:'Glass', location:''},
+    {image:'assets/projects/aluminium-shopfront-frame.jpg', title:'Shopfront Frame', category:'Aluminium', location:''},
+    {image:'assets/projects/bedroom-mirror-feature-wall.jpg', title:'Bedroom Feature Wall', category:'Mirrors', location:''},
+    {image:'assets/projects/office-cabin-interior.jpg', title:'Office Cabin Layout', category:'Interior', location:''},
+    {image:'assets/projects/pvc-false-ceiling-hall.jpg', title:'PVC False Ceiling', category:'Ceiling', location:''},
+    {image:'assets/projects/shower-cubicle-glass.jpg', title:'Shower Cubicle', category:'Glass', location:''},
+    {image:'assets/projects/modular-wardrobe-interior.jpg', title:'Modular Wardrobe', category:'Interior', location:''},
+    {image:'assets/projects/aluminium-balcony-window.jpg', title:'Balcony Window', category:'Aluminium', location:''},
+    {image:'assets/projects/salon-digital-mirror.jpg', title:'Salon Digital Mirror', category:'Mirrors', location:'Bhopal'},
+    {image:'assets/projects/accent-wallpaper-bedroom.jpg', title:'Accent Wallpaper', category:'Interior', location:''},
+    {image:'assets/projects/gypsum-led-cove-ceiling.jpg', title:'Gypsum + LED Cove', category:'Ceiling', location:''},
+    {image:'assets/projects/staircase-glass-railing.jpg', title:'Staircase Railing', category:'Glass', location:''}
   ];
 
   var FAQS = [
@@ -1280,13 +1307,6 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 
   /* ---------- Helpers ---------- */
   function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
-  function facetSvg(){
-    return '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+
-      '<polygon points="0,400 140,120 260,180 400,0 400,400" fill="#221C15"/>'+
-      '<polygon points="140,120 260,180 220,400 60,400" fill="#1C160F"/>'+
-      '<g stroke="#AE8A3D" stroke-opacity="0.35" stroke-width="1"><path d="M0 400L140 120L260 180L400 0"/><path d="M60 400L220 400L260 180"/></g>'+
-    '</svg>';
-  }
 
   /* ---------- Build Our Work strip ---------- */
   var workTrack = document.getElementById('workTrack');
@@ -1361,21 +1381,27 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
     servicesList.appendChild(row);
   });
 
-  /* ---------- Build Gallery ---------- */
-  var galleryGrid = document.getElementById('galleryGrid');
-  GALLERY.forEach(function(g, i){
-    var item = el('div','gallery-item '+g.size);
-    item.setAttribute('data-cat', g.cat);
-    item.setAttribute('data-index', i);
+  /* ---------- Build Featured Projects ----------
+     Reusable card renderer: pass it any project object from PROJECTS
+     and an index, and it returns a ready-to-insert image tile. */
+  var MASONRY_SIZES = ['h-tall','h-square','h-med','h-wide'];
+  function renderProjectCard(project, index){
+    var size = MASONRY_SIZES[index % MASONRY_SIZES.length];
+    var item = el('div','gallery-item '+size);
+    item.setAttribute('data-cat', project.category.toLowerCase());
+    item.setAttribute('data-index', index);
+    var metaLine = project.category + (project.location ? ' · ' + project.location : '');
     item.innerHTML =
-      '<div class="facet-tile">'+facetSvg()+
-        '<div class="glyph"><svg class="icon" aria-hidden="true"><use href="#'+g.icon+'"/></svg></div>'+
-        (g.video ? '<div class="play-hint"><span><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg></span></div>' : '<div class="zoom-hint"><svg class="icon" aria-hidden="true"><use href="#i-zoom"/></svg></div>')+
-        '<div class="cap"><span class="cap-tag">'+g.tag+'</span><span class="cap-title">'+g.title+'</span></div>'+
+      '<div class="project-media">'+
+        '<img src="'+project.image+'" alt="'+project.title+'" loading="lazy" onerror="this.closest(\'.gallery-item\').classList.add(\'img-missing\')">'+
+        '<div class="zoom-hint"><svg class="icon" aria-hidden="true"><use href="#i-zoom"/></svg></div>'+
+        '<div class="cap"><span class="cap-tag">'+metaLine+'</span><span class="cap-title">'+project.title+'</span></div>'+
       '</div>';
-    item.addEventListener('click', function(){ openLightbox(i); });
-    galleryGrid.appendChild(item);
-  });
+    item.addEventListener('click', function(){ openLightbox(index); });
+    return item;
+  }
+  var galleryGrid = document.getElementById('galleryGrid');
+  PROJECTS.forEach(function(p, i){ galleryGrid.appendChild(renderProjectCard(p, i)); });
 
   /* ---------- Build FAQ ---------- */
   var faqWrap = document.getElementById('faqWrap');
@@ -1459,15 +1485,18 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 
   /* ---------- Lightbox ---------- */
   var lightbox = document.getElementById('lightbox');
-  var lbIcon = document.getElementById('lbIcon');
+  var lbTile = document.getElementById('lbTile');
+  var lbImage = document.getElementById('lbImage');
   var lbTag = document.getElementById('lbTag');
   var lbTitle = document.getElementById('lbTitle');
   var currentIndex = 0;
   function renderLightbox(i){
-    var g = GALLERY[i];
-    lbIcon.setAttribute('href','#'+g.icon);
-    lbTag.textContent = g.tag;
-    lbTitle.textContent = g.title;
+    var p = PROJECTS[i];
+    lbTile.classList.remove('img-missing');
+    lbImage.setAttribute('src', p.image);
+    lbImage.setAttribute('alt', p.title);
+    lbTag.textContent = p.category + (p.location ? ' · ' + p.location : '');
+    lbTitle.textContent = p.title;
   }
   function openLightbox(i){
     currentIndex = i; renderLightbox(i);
@@ -1476,8 +1505,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   function closeLightbox(){ lightbox.classList.remove('open'); document.body.style.overflow=''; }
   document.getElementById('lbClose').addEventListener('click', closeLightbox);
   lightbox.addEventListener('click', function(e){ if(e.target === lightbox) closeLightbox(); });
-  document.getElementById('lbPrev').addEventListener('click', function(){ currentIndex=(currentIndex-1+GALLERY.length)%GALLERY.length; renderLightbox(currentIndex); });
-  document.getElementById('lbNext').addEventListener('click', function(){ currentIndex=(currentIndex+1)%GALLERY.length; renderLightbox(currentIndex); });
+  document.getElementById('lbPrev').addEventListener('click', function(){ currentIndex=(currentIndex-1+PROJECTS.length)%PROJECTS.length; renderLightbox(currentIndex); });
+  document.getElementById('lbNext').addEventListener('click', function(){ currentIndex=(currentIndex+1)%PROJECTS.length; renderLightbox(currentIndex); });
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape'){ closeLightbox(); closeServiceModal(); }
     if(lightbox.classList.contains('open')){
