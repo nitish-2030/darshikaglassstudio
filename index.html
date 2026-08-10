@@ -729,32 +729,56 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 }
 
 /* ============================= FOOTER ============================= */
-.footer{background:var(--navy);color:#B9C2CE;padding-top:70px}
-.footer-grid{display:grid;gap:40px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.footer-brand .brand{color:#fff;margin-bottom:14px}
+.footer{background:var(--navy);color:#B9C2CE;padding-top:52px}
+.footer-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  grid-template-areas:
+    "brand brand"
+    "links services"
+    "contact contact";
+  gap:30px 20px;
+  padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.footer-brand{grid-area:brand}
+.footer-col--links{grid-area:links}
+.footer-col--services{grid-area:services}
+.footer-col--contact{grid-area:contact}
+.footer-brand .brand{color:#fff;margin-bottom:10px}
 .footer-brand .brand-mark{box-shadow:0 0 0 1px rgba(174,138,61,0.35), 0 4px 16px rgba(174,138,61,0.25)}
-.footer-brand p{font-size:.88rem;max-width:34ch;color:#9CA7B3}
-.social-row{display:flex;gap:10px;margin-top:20px}
+.footer-brand p{font-size:.86rem;max-width:40ch;color:#9CA7B3}
+.social-row{display:flex;gap:10px;margin-top:16px}
 .social-row a{
-  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   color:#EDEFF2;border:1px solid rgba(255,255,255,0.18);
   background:linear-gradient(155deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.14);
   transition:all .3s var(--ease);
 }
 .social-row a:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);box-shadow:0 4px 16px rgba(174,138,61,0.4)}
-.social-row .icon{width:16px;height:16px}
-.footer h4{color:#fff;font-family:'Manrope',sans-serif;font-weight:600;font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
-.footer-links{display:flex;flex-direction:column;gap:11px}
-.footer-links a{font-size:.88rem;color:#9CA7B3;transition:color .3s}
+.social-row .icon{width:15px;height:15px}
+.footer h4{color:#fff;font-family:'Manrope',sans-serif;font-weight:600;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:13px}
+.footer-links{display:flex;flex-direction:column;gap:9px}
+.footer-links a{font-size:.86rem;color:#9CA7B3;transition:color .3s}
 .footer-links a:hover{color:var(--gold-light)}
-.footer-contact li{font-size:.88rem;color:#9CA7B3;margin-bottom:12px;display:flex;gap:10px}
-.footer-contact .icon{width:16px;height:16px;color:var(--gold);flex-shrink:0;margin-top:3px}
-.footer-bottom{display:flex;flex-direction:column;gap:10px;padding-block:24px;font-size:.8rem;color:#7C8896;text-align:center}
+.footer-contact{display:flex;flex-direction:column;gap:9px}
+.footer-contact li{font-size:.86rem;color:#9CA7B3;display:flex;gap:9px;align-items:flex-start}
+.footer-contact .icon{width:15px;height:15px;color:var(--gold);flex-shrink:0;margin-top:2px}
+.footer-bottom{display:flex;flex-direction:column;gap:8px;padding-block:18px;font-size:.78rem;color:#7C8896;text-align:center}
 
-@media(min-width:640px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:640px){
+  .footer-grid{gap:34px 24px}
+  .footer-col--contact .footer-contact{display:grid;grid-template-columns:1fr 1fr;column-gap:20px;row-gap:9px}
+  .footer-col--contact .footer-contact li:first-child{grid-column:1/-1}
+}
 @media(min-width:1024px){
-  .footer-grid{grid-template-columns:1.3fr 0.8fr 0.9fr 1fr}
+  .footer{padding-top:64px}
+  .footer-grid{
+    grid-template-columns:1.3fr 0.8fr 0.9fr 1fr;
+    grid-template-areas:"brand links services contact";
+    gap:40px;padding-bottom:40px;
+  }
+  .footer-col--contact .footer-contact{display:flex;flex-direction:column}
+  .footer-col--contact .footer-contact li:first-child{grid-column:auto}
   .footer-bottom{flex-direction:row;justify-content:space-between;text-align:left}
 }
 
@@ -1173,19 +1197,19 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
         <a href="https://wa.me/919755054649" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></a>
       </div>
     </div>
-    <div>
+    <div class="footer-col--links">
       <h4>Quick Links</h4>
       <div class="footer-links">
         <a href="#about">About</a><a href="#services">Services</a><a href="#gallery">Gallery</a><a href="#process">Process</a><a href="#faq">FAQ</a><a href="#contact">Contact</a>
       </div>
     </div>
-    <div>
+    <div class="footer-col--services">
       <h4>Services</h4>
       <div class="footer-links">
         <a href="#services">Glass Work</a><a href="#services">Aluminium Work</a><a href="#services">Digital Mirror</a><a href="#services">Wallpaper</a><a href="#services">Interior Work</a><a href="#services">Furniture Work</a><a href="#services">PVC False Ceiling</a>
       </div>
     </div>
-    <div>
+    <div class="footer-col--contact">
       <h4>Contact</h4>
       <ul class="footer-contact">
         <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>Tilwari, Majhauli, Sidhi, MP – 486666</span></li>
@@ -1283,17 +1307,17 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
      The masonry tile shape (tall/wide/square/medium) is assigned
      automatically based on position, so you never need to touch CSS. */
   var PROJECTS = [
-    {image:'assets/projects/glass-partition-living-room.jpg', title:'Living Room Partition', category:'Glass', location:''},
-    {image:'assets/projects/aluminium-shopfront-frame.jpg', title:'Shopfront Frame', category:'Aluminium', location:''},
+    {image:'assets/projects/glass-partition-living-room.jpg', title:'Living Room Partition', category:'Glass', location:'Sidhi'},
+    {image:'assets/projects/aluminium-shopfront-frame.jpg', title:'Shopfront Frame', category:'Aluminium', location:'Sidhi'},
     {image:'assets/projects/bedroom-mirror-feature-wall.jpg', title:'Bedroom Feature Wall', category:'Mirrors', location:''},
-    {image:'assets/projects/office-cabin-interior.jpg', title:'Office Cabin Layout', category:'Interior', location:''},
+    {image:'assets/projects/office-cabin-interior.jpg', title:'Office Cabin Layout', category:'Interior', location:'Sidhi'},
     {image:'assets/projects/pvc-false-ceiling-hall.jpg', title:'PVC False Ceiling', category:'Ceiling', location:''},
     {image:'assets/projects/shower-cubicle-glass.jpg', title:'Shower Cubicle', category:'Glass', location:''},
-    {image:'assets/projects/modular-wardrobe-interior.jpg', title:'Modular Wardrobe', category:'Interior', location:''},
+    {image:'assets/projects/modular-wardrobe-interior.jpg', title:'Modular Wardrobe', category:'Interior', location:'Majhauli'},
     {image:'assets/projects/aluminium-balcony-window.jpg', title:'Balcony Window', category:'Aluminium', location:''},
-    {image:'assets/projects/salon-digital-mirror.jpg', title:'Salon Digital Mirror', category:'Mirrors', location:'Bhopal'},
+    {image:'assets/projects/salon-digital-mirror.jpg', title:'Salon Digital Mirror', category:'Mirrors', location:'Sidhi'},
     {image:'assets/projects/accent-wallpaper-bedroom.jpg', title:'Accent Wallpaper', category:'Interior', location:''},
-    {image:'assets/projects/gypsum-led-cove-ceiling.jpg', title:'Gypsum + LED Cove', category:'Ceiling', location:''},
+    {image:'assets/projects/gypsum-led-cove-ceiling.jpg', title:'Gypsum + LED Cove', category:'Ceiling', location:'Sidhi'},
     {image:'assets/projects/staircase-glass-railing.jpg', title:'Staircase Railing', category:'Glass', location:''}
   ];
 
