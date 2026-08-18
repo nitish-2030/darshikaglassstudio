@@ -391,24 +391,22 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   display:flex;align-items:center;gap:12px;
   padding:10px;border-radius:var(--radius-md);
   background:var(--bg);border:1px solid var(--line);
-  box-shadow:var(--shadow-sm);cursor:pointer;
+  box-shadow:var(--shadow-sm);
   transition:box-shadow .35s var(--ease),transform .35s var(--ease),border-color .35s var(--ease);
 }
-.service-row:active{transform:scale(0.98)}
 @media(hover:hover){
   .service-row:hover{box-shadow:var(--shadow-md);border-color:var(--line-strong);transform:translateY(-2px)}
 }
-.service-row__thumb-mobile{position:relative;width:72px;height:72px;flex-shrink:0;border-radius:12px;overflow:hidden}
-.service-row__thumb-mobile img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover}
-.service-row__thumb-mobile .glyph{z-index:0}
-.service-row__thumb-mobile .glyph .icon{width:38%;height:38%}
+.service-row__thumb{position:relative;width:72px;height:72px;flex-shrink:0;border-radius:12px;overflow:hidden}
+.service-row__thumb img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover}
+.service-row__thumb .glyph{z-index:0}
+.service-row__thumb .glyph .icon{width:38%;height:38%}
 .service-row__num-badge{
   position:absolute;top:6px;left:6px;z-index:2;width:20px;height:20px;border-radius:50%;
   background:rgba(15,12,9,0.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
   display:flex;align-items:center;justify-content:center;
   font-family:'Fraunces',serif;font-size:.62rem;font-weight:600;color:var(--gold-light);
 }
-.service-row__num{display:none}
 .service-row__body{flex:1;min-width:0}
 .service-row__body .tag{display:none}
 .service-row__body h3{font-size:.98rem;margin:0 0 4px;line-height:1.22}
@@ -416,42 +414,16 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   color:var(--text-muted);font-size:.8rem;line-height:1.4;max-width:none;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
-.service-row__cta{display:none}
-.service-row__chevron{
-  flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--bg-soft);
-  display:flex;align-items:center;justify-content:center;color:var(--gold);
-  transition:background .3s,color .3s,transform .3s;
-}
-.service-row__chevron .icon{width:13px;height:13px}
-@media(hover:hover){.service-row:hover .service-row__chevron{background:var(--gold);color:#fff;transform:translateX(2px)}}
-.service-row__float{display:none}
 
 @media(min-width:1024px){
-  .services-list{display:block;gap:0;border-top:1px solid var(--line)}
+  .services-list{display:grid;grid-template-columns:1fr 1fr;gap:20px;border-top:none}
   .service-row{
-    border-radius:0;background:transparent;border:none;border-bottom:1px solid var(--line);
-    box-shadow:none;padding:34px 0;align-items:center;
+    align-items:flex-start;gap:20px;padding:22px;
   }
-  .service-row:hover{transform:none;box-shadow:none;background:var(--bg-soft)}
-  .service-row__thumb-mobile{display:none}
-  .service-row__num{
-    display:block;font-family:'Fraunces',serif;font-size:2.6rem;font-weight:600;
-    color:rgba(11,31,51,0.14);width:90px;flex-shrink:0;transition:color .4s var(--ease);
-  }
-  .service-row:hover .service-row__num{color:var(--gold)}
-  .service-row__body{display:flex;align-items:center;justify-content:space-between;gap:40px}
+  .service-row__thumb{width:104px;height:104px;border-radius:16px}
   .service-row__body .tag{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600}
-  .service-row__body h3{font-size:1.18rem;margin:6px 0 8px}
-  .service-row__body p{-webkit-line-clamp:unset;display:block;overflow:visible;max-width:52ch;font-size:.92rem}
-  .service-row__cta{display:inline-flex;margin-top:0;flex-shrink:0}
-  .service-row__chevron{display:none}
-  .service-row__float{
-    display:block;position:absolute;right:8%;bottom:calc(100% - 6px);
-    width:180px;height:130px;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-lg);
-    transform:translateY(14px) rotate(-2deg) scale(.92);opacity:0;pointer-events:none;
-    transition:all .5s var(--ease);z-index:5;
-  }
-  .service-row:hover .service-row__float{opacity:1;transform:translateY(0) rotate(-2deg) scale(1)}
+  .service-row__body h3{font-size:1.12rem;margin:6px 0 8px}
+  .service-row__body p{-webkit-line-clamp:unset;display:block;overflow:visible;max-width:46ch;font-size:.9rem}
 }
 
 /* ============================= WHY CHOOSE (dark checklist band) ============================= */
@@ -994,7 +966,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
     <div class="section-head reveal">
       <p class="eyebrow">What We Do</p>
       <h2>Our Craft, Listed Plainly</h2>
-      <p>Seven trades, one studio. Tap any line for details, or call us to talk through your space.</p>
+      <p>Seven trades, one studio. Call us to talk through your space.</p>
     </div>
 
     <div class="services-list reveal" id="servicesList">
@@ -1035,8 +1007,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
     </div>
 
     <div class="filter-row reveal" id="filterRow">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="glass">Glass</button>
+      <button class="filter-btn" data-filter="all">All</button>
+      <button class="filter-btn active" data-filter="glass">Glass</button>
       <button class="filter-btn" data-filter="interior">Interior</button>
       <button class="filter-btn" data-filter="mirrors">Mirrors</button>
       <button class="filter-btn" data-filter="aluminium">Aluminium</button>
@@ -1294,13 +1266,21 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
      The masonry tile shape (tall/wide/square/medium) is assigned
      automatically based on position, so you never need to touch CSS. */
   var PROJECTS = [
-    {image:'assets/projects/glass-partition-living-room.jpg', title:'Living Room Partition', category:'Glass', location:'Sidhi'},
-    {image:'assets/projects/aluminium-shopfront-frame.jpg', title:'Shopfront Frame', category:'Aluminium', location:'Sidhi'},
+    {image:'assets/projects/glass-partition-living-room.jpg', title:'Living Room Partition', category:'Glass', location:''},
+    {image:'assets/projects/aluminium-shopfront-frame.jpg', title:'Frame', category:'Aluminium', location:''},
     {image:'assets/projects/bedroom-mirror-feature-wall.jpg', title:'Bedroom Feature Wall', category:'Mirrors', location:''},
-    {image:'assets/projects/office-cabin-interior.jpg', title:'Office Cabin Layout', category:'Interior', location:'Sidhi'},
+
+
+    {image:'assets/projects/modular-wardrobe-interior.jpg', title:'Modular Wardrobe', category:'Interior', location:'Sidhi'},
+
+
     {image:'assets/projects/pvc-false-ceiling-hall.jpg', title:'PVC False Ceiling', category:'Ceiling', location:''},
     {image:'assets/projects/shower-cubicle-glass.jpg', title:'Shower Cubicle', category:'Glass', location:''},
-    {image:'assets/projects/modular-wardrobe-interior.jpg', title:'Modular Wardrobe', category:'Interior', location:'Majhauli'},
+
+
+    {image:'assets/projects/office-cabin-interior.jpg', title:'Office Cabin Layout', category:'Interior', location:'Sidhi'},
+
+
     {image:'assets/projects/aluminium-balcony-window.jpg', title:'Balcony Window', category:'Aluminium', location:''},
     {image:'assets/projects/salon-digital-mirror.jpg', title:'Salon Digital Mirror', category:'Mirrors', location:'Sidhi'},
     {image:'assets/projects/accent-wallpaper-bedroom.jpg', title:'Accent Wallpaper', category:'Interior', location:''},
@@ -1376,19 +1356,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
     var row = el('div','service-row');
     row.setAttribute('data-index', i);
     row.innerHTML =
-      '<div class="service-row__thumb-mobile facet-tile">'+
+      '<div class="service-row__thumb facet-tile">'+
         '<div class="glyph"><svg class="icon" aria-hidden="true"><use href="#'+s.icon+'"/></svg></div>'+
         '<img src="'+s.img+'" alt="'+s.title+'" loading="lazy" onerror="this.style.display=\'none\'">'+
         '<span class="service-row__num-badge">'+s.tag+'</span>'+
       '</div>'+
-      '<span class="service-row__num">'+s.tag+'</span>'+
       '<div class="service-row__body">'+
-        '<div><p class="tag">'+s.tag+'</p><h3>'+s.title+'</h3><p>'+s.desc+'</p></div>'+
-        '<button type="button" class="text-link service-row__cta">Learn More <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>'+
-      '</div>'+
-      '<span class="service-row__chevron" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span>'+
-      '<div class="service-row__float facet-tile"><div class="glyph"><svg class="icon" aria-hidden="true"><use href="#'+s.icon+'"/></svg></div></div>';
-    row.addEventListener('click', function(){ openServiceModal(i); });
+        '<p class="tag">'+s.tag+'</p><h3>'+s.title+'</h3><p>'+s.desc+'</p>'+
+      '</div>';
     servicesList.appendChild(row);
   });
 
@@ -1482,17 +1457,22 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   requestAnimationFrame(function(){ document.getElementById('heroReveal').classList.add('is-visible'); });
 
   /* ---------- Gallery filter ---------- */
+  function applyGalleryFilter(f){
+    document.querySelectorAll('.gallery-item').forEach(function(item){
+      var match = (f === 'all' || item.getAttribute('data-cat') === f);
+      item.classList.toggle('hide', !match);
+    });
+  }
   document.getElementById('filterRow').addEventListener('click', function(e){
     var btn = e.target.closest('.filter-btn');
     if(!btn) return;
     document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
-    var f = btn.getAttribute('data-filter');
-    document.querySelectorAll('.gallery-item').forEach(function(item){
-      var match = (f === 'all' || item.getAttribute('data-cat') === f);
-      item.classList.toggle('hide', !match);
-    });
+    applyGalleryFilter(btn.getAttribute('data-filter'));
   });
+  // apply whichever filter is active by default on load
+  var defaultFilterBtn = document.querySelector('.filter-btn.active');
+  applyGalleryFilter(defaultFilterBtn ? defaultFilterBtn.getAttribute('data-filter') : 'all');
 
   /* ---------- Lightbox ---------- */
   var lightbox = document.getElementById('lightbox');
