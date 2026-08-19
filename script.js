@@ -89,21 +89,30 @@
     workTrack.appendChild(item);
   });
 
-  /* Play each work clip only while it's actually visible — saves data/battery,
-     and means the very first thing a visitor sees is never a stalled video. */
+  /* Click-to-play: the video file only downloads once the user actually
+     asks for it. (Old code auto-loaded+played every video that scrolled
+     into view — on tablet/desktop .work-track becomes a visible 4-col
+     grid with overflow:visible, not a clipped scroll strip, so most/all
+     6 videos counted as "in view" on page load and all downloaded at once.
+     That was the 6-video simultaneous-load problem.) */
+  document.querySelectorAll('.work-item').forEach(function(item){
+    var v = item.querySelector('video');
+    if(!v) return;
+    var src = v.querySelector('source');
+    item.addEventListener('click', function(){
+      if(src && src.dataset.src && !v.currentSrc){ src.src = src.dataset.src; v.load(); }
+      document.querySelectorAll('.work-item video.is-active').forEach(function(other){
+        if(other !== v){ other.pause(); other.classList.remove('is-active'); }
+      });
+      v.play().then(function(){ v.classList.add('is-active'); }).catch(function(){});
+    });
+  });
+
+  /* Pause a playing clip once it scrolls out of view (battery/data, not loading) */
   if('IntersectionObserver' in window){
     var workVideoIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        var v = entry.target;
-        var src = v.querySelector('source');
-        if(entry.isIntersecting){
-          if(src && src.dataset.src && !v.src && !v.currentSrc){ src.src = src.dataset.src; v.load(); }
-          v.play().then(function(){ v.classList.add('is-active'); }).catch(function(){});
-        } else {
-          v.pause();
-        }
-      });
-    }, {threshold:0.6});
+      entries.forEach(function(entry){ if(!entry.isIntersecting) entry.target.pause(); });
+    }, {threshold:0.2});
     document.querySelectorAll('.work-item video').forEach(function(v){ workVideoIO.observe(v); });
   }
 
@@ -313,6 +322,24 @@
     document.getElementById('formSuccess').classList.add('show');
     window.open('https://wa.me/919755054649?text=' + text, '_blank', 'noopener');
   });
+
+  /* ---------- Lazy-load process section background (CSS backgrounds ignore loading="lazy") ---------- */
+  var bgEl = document.querySelector('[data-bg]');
+  if(bgEl){
+    if('IntersectionObserver' in window){
+      var bgIO = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting){
+            entry.target.style.backgroundImage = "url('" + entry.target.dataset.bg + "')";
+            bgIO.unobserve(entry.target);
+          }
+        });
+      }, {rootMargin:'600px 0px'});
+      bgIO.observe(bgEl);
+    } else {
+      bgEl.style.backgroundImage = "url('" + bgEl.dataset.bg + "')";
+    }
+  }
 
   /* ---------- Footer year ---------- */
   document.getElementById('yearNow').textContent = new Date().getFullYear();
