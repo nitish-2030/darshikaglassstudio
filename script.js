@@ -73,6 +73,7 @@
 
   /* ---------- Build Our Work strip ---------- */
   var workTrack = document.getElementById('workTrack');
+  var workTrackInner = document.getElementById('workTrackInner');
   WORK.forEach(function(w){
     var item = el('div','work-item');
     if(w.type === 'video'){
@@ -88,7 +89,7 @@
         '<div class="work-media"><img src="'+w.src+'" alt="'+w.title+'" loading="lazy"></div>'+
         '<p class="work-caption">'+w.title+'</p>';
     }
-    workTrack.appendChild(item);
+    workTrackInner.appendChild(item);
   });
 
   /* Click-to-play: the video file only downloads once the user actually
@@ -120,27 +121,88 @@
     });
   });
 
-  /* Prev/Next arrows for the desktop/laptop 4-up scroller. Steps by exactly
-     one card width (+ gap) each click, and disables at the very start/end. */
+  /* Prev/Next arrows for the desktop/laptop 4-up view. Below 1024px this is a
+     no-op — native touch/trackpad swipe (scrollLeft on .work-track) handles
+     it instead, unchanged from before.
+
+     At 1024px+, .work-track becomes a fixed-width, overflow:hidden viewport
+     and .work-track-inner (the actual flex row of cards) is moved with a
+     plain CSS `transform: translateX()` set directly from JS. This is used
+     instead of scrollLeft because scrollLeft's behaviour on an
+     overflow:hidden element is inconsistent across browsers — a transform
+     is guaranteed to work everywhere and is simple to reason about: index 0
+     shows cards 1-4, "Next" moves the index up by one (revealing card 5,
+     hiding card 1), "Prev" moves it back down. */
   var workPrevBtn = document.getElementById('workPrev');
   var workNextBtn = document.getElementById('workNext');
-  if(workTrack && workPrevBtn && workNextBtn){
-    var stepWork = function(dir){
-      var card = workTrack.querySelector('.work-item');
-      var gap = parseFloat(getComputedStyle(workTrack).columnGap || getComputedStyle(workTrack).gap || 16) || 16;
-      var step = card ? (card.getBoundingClientRect().width + gap) : (workTrack.clientWidth * 0.8);
-      workTrack.scrollBy({left: dir * step, behavior: 'smooth'});
-    };
-    workPrevBtn.addEventListener('click', function(){ stepWork(-1); });
-    workNextBtn.addEventListener('click', function(){ stepWork(1); });
-    var updateWorkArrows = function(){
-      var max = workTrack.scrollWidth - workTrack.clientWidth - 1;
-      workPrevBtn.disabled = workTrack.scrollLeft <= 1;
-      workNextBtn.disabled = workTrack.scrollLeft >= max;
-    };
-    workTrack.addEventListener('scroll', updateWorkArrows, {passive:true});
-    window.addEventListener('resize', updateWorkArrows);
-    updateWorkArrows();
+  var WORK_VISIBLE = 4;
+  var WORK_GAP = 16;
+  var workIndex = 0;
+
+  function isWorkDesktop(){ return window.innerWidth >= 1024; }
+
+  function workMaxIndex(){
+    var items = workTrackInner.querySelectorAll('.work-item');
+    return Math.max(0, items.length - WORK_VISIBLE);
+  }
+
+  function sizeWorkCardsForDesktop(){
+    if(!isWorkDesktop()){
+      // Leaving desktop mode (e.g. window resized narrower): clear all the
+      // inline styles JS added so mobile/tablet CSS takes back over untouched.
+      workTrackInner.style.transform = '';
+      workTrackInner.querySelectorAll('.work-item').forEach(function(item){ item.style.width = ''; });
+      return;
+    }
+    var trackStyles = getComputedStyle(workTrack);
+    var padLeft = parseFloat(trackStyles.paddingLeft) || 0;
+    var padRight = parseFloat(trackStyles.paddingRight) || 0;
+    var viewportWidth = workTrack.clientWidth - padLeft - padRight;
+    var itemWidth = (viewportWidth - WORK_GAP * (WORK_VISIBLE - 1)) / WORK_VISIBLE;
+    workTrackInner.querySelectorAll('.work-item').forEach(function(item){
+      item.style.width = itemWidth + 'px';
+    });
+  }
+
+  function renderWorkPosition(animate){
+    if(!isWorkDesktop()) return;
+    var items = workTrackInner.querySelectorAll('.work-item');
+    if(!items.length) return;
+    var itemWidth = items[0].getBoundingClientRect().width;
+    var offset = workIndex * (itemWidth + WORK_GAP);
+    workTrackInner.style.transition = animate === false ? 'none' : '';
+    workTrackInner.style.transform = 'translateX(' + (-offset) + 'px)';
+    if(workPrevBtn) workPrevBtn.disabled = workIndex <= 0;
+    if(workNextBtn) workNextBtn.disabled = workIndex >= workMaxIndex();
+  }
+
+  function goWork(dir){
+    workIndex = Math.min(Math.max(workIndex + dir, 0), workMaxIndex());
+    renderWorkPosition(true);
+  }
+
+  if(workTrack && workTrackInner && workPrevBtn && workNextBtn){
+    workPrevBtn.addEventListener('click', function(){ goWork(-1); });
+    workNextBtn.addEventListener('click', function(){ goWork(1); });
+
+    var workResizeTimer = null;
+    window.addEventListener('resize', function(){
+      clearTimeout(workResizeTimer);
+      workResizeTimer = setTimeout(function(){
+        workIndex = Math.min(workIndex, workMaxIndex());
+        sizeWorkCardsForDesktop();
+        renderWorkPosition(false);
+      }, 120);
+    });
+
+    // Initial layout. Fonts/webfont swap can shift measured widths slightly,
+    // so re-run once more shortly after load to correct for that.
+    sizeWorkCardsForDesktop();
+    renderWorkPosition(false);
+    window.addEventListener('load', function(){
+      sizeWorkCardsForDesktop();
+      renderWorkPosition(false);
+    });
   }
 
   /* Swipe-hint dots for the mobile/tablet horizontal strip (hidden by CSS once
@@ -388,9 +450,9 @@
     window.open('https://wa.me/919755054649?text=' + text, '_blank', 'noopener');
   });
 
-  /* ---------- Lazy-load process section background (CSS backgrounds ignore loading="lazy") ---------- */
-  var bgEl = document.querySelector('[data-bg]');
-  if(bgEl){
+  /* ---------- Lazy-load parallax section backgrounds (CSS backgrounds ignore loading="lazy") ---------- */
+  var bgEls = document.querySelectorAll('[data-bg]');
+  if(bgEls.length){
     if('IntersectionObserver' in window){
       var bgIO = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
@@ -400,9 +462,9 @@
           }
         });
       }, {rootMargin:'600px 0px'});
-      bgIO.observe(bgEl);
+      bgEls.forEach(function(el){ bgIO.observe(el); });
     } else {
-      bgEl.style.backgroundImage = "url('" + bgEl.dataset.bg + "')";
+      bgEls.forEach(function(el){ el.style.backgroundImage = "url('" + el.dataset.bg + "')"; });
     }
   }
 
