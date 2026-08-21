@@ -74,6 +74,7 @@
 <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></symbol>
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6L5 12l6 6"/></symbol>
 <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></symbol>
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8V4z"/></symbol>
@@ -171,10 +172,14 @@
     </div>
   </div>
   <div class="work-track-wrap reveal">
-    <button type="button" class="work-arrow work-arrow-prev" id="workPrev" aria-label="Previous videos"><svg class="icon" aria-hidden="true"><use href="#i-arrow" style="transform:rotate(180deg)"/></svg></button>
     <div class="work-track" id="workTrack" aria-label="Recent project photos and clips">
-      <!-- Populated by JS from the WORK array below -->
+      <div class="work-track-inner" id="workTrackInner">
+        <!-- Populated by JS from the WORK array below -->
+      </div>
     </div>
+  </div>
+  <div class="work-nav" id="workNav">
+    <button type="button" class="work-arrow work-arrow-prev" id="workPrev" aria-label="Previous videos"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
     <button type="button" class="work-arrow work-arrow-next" id="workNext" aria-label="Next videos"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
   </div>
   <div class="work-dots" id="workDots" aria-hidden="true"></div>
@@ -207,6 +212,28 @@
   </div>
 </section>
 
+<!-- ============================= MARQUEE ============================= -->
+<section class="marquee-section" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-group">
+      <span>CRAFTED WITH PRECISION</span><span class="marquee-dot">✦</span>
+      <span>CUSTOM GLASS</span><span class="marquee-dot">✦</span>
+      <span>GLASS ART &amp; DESIGNS</span><span class="marquee-dot">✦</span>
+      <span>ALUMINIUM WORK</span><span class="marquee-dot">✦</span>
+      <span>INTERIOR SOLUTIONS</span><span class="marquee-dot">✦</span>
+      <span>MADE FOR YOUR SPACE</span><span class="marquee-dot">✦</span>
+    </div>
+    <div class="marquee-group">
+      <span>CRAFTED WITH PRECISION</span><span class="marquee-dot">✦</span>
+      <span>CUSTOM GLASS</span><span class="marquee-dot">✦</span>
+      <span>GLASS ART &amp; DESIGNS</span><span class="marquee-dot">✦</span>
+      <span>ALUMINIUM WORK</span><span class="marquee-dot">✦</span>
+      <span>INTERIOR SOLUTIONS</span><span class="marquee-dot">✦</span>
+      <span>MADE FOR YOUR SPACE</span><span class="marquee-dot">✦</span>
+    </div>
+  </div>
+</section>
+
 <!-- ============================= SERVICES ============================= -->
 <section class="section section-soft services-section" id="services">
   <div class="container">
@@ -223,7 +250,9 @@
 </section>
 
 <!-- ============================= WHY CHOOSE US ============================= -->
-<section class="section section-navy" id="why">
+<section class="section section-navy parallax-section" id="why">
+  <div class="why-section__bg parallax-bg" data-bg="assets/process/why-visual.jpg" aria-hidden="true"></div>
+  <div class="parallax-overlay" aria-hidden="true"></div>
   <div class="container why-grid">
     <div class="why-lede reveal">
       <p class="eyebrow">Why Choose Us</p>
@@ -267,8 +296,8 @@
 </section>
 
 <!-- ============================= PROCESS ============================= -->
-<section class="section process-section" id="process">
-  <div class="process-section__bg" data-bg="assets/process/process-visual.webp" aria-hidden="true"></div>
+<section class="section process-section parallax-section" id="process">
+  <div class="process-section__bg parallax-bg" data-bg="assets/process/process-visual.webp" aria-hidden="true"></div>
   <div class="container">
     <div class="section-head center reveal" style="margin-inline:auto">
       <p class="eyebrow" style="justify-content:center">Working Process</p>
@@ -455,7 +484,7 @@
 <div class="lightbox" id="lightbox">
   <div class="lightbox-body">
     <button class="lightbox-close" id="lbClose" aria-label="Close"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
-    <button class="lightbox-prev" id="lbPrev" aria-label="Previous"><svg class="icon" aria-hidden="true"><use href="#i-arrow" style="transform:rotate(180deg)"/></svg></button>
+    <button class="lightbox-prev" id="lbPrev" aria-label="Previous"><svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg></button>
     <div class="lightbox-media" id="lbTile">
       <img id="lbImage" src="" alt="" onerror="this.closest('.lightbox-media').classList.add('img-missing')">
       <div class="cap"><span class="cap-tag" id="lbTag">Glass</span><span class="cap-title" id="lbTitle">Project</span></div>
