@@ -50,7 +50,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .container{max-width:var(--container);margin-inline:auto;padding-inline:20px}
 @media(min-width:768px){.container{padding-inline:32px}}
 
-.section{padding-block:64px}
+.section{padding-block:64px;background:var(--bg)}
 @media(min-width:1024px){.section{padding-block:104px}}
 
 .section-soft{background:var(--bg-soft)}
@@ -203,6 +203,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   position:relative;min-height:100svh;display:flex;align-items:center;
   background:var(--navy);color:#fff;overflow:hidden;padding-top:96px;padding-bottom:110px;
 }
+/* hero-bg: normal position:absolute on mobile/tablet (unchanged, original
+   behaviour). */
 .hero-bg{position:absolute;inset:0;z-index:0;background:var(--navy)}
 .hero-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .hero-video{opacity:0;transition:opacity 1s var(--ease)}
@@ -211,6 +213,21 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   background:
     linear-gradient(100deg, rgba(15,12,9,0.62) 0%, rgba(15,12,9,0.38) 45%, rgba(15,12,9,0.16) 78%, rgba(15,12,9,0.08) 100%),
     linear-gradient(180deg, rgba(15,12,9,0.30) 0%, rgba(15,12,9,0.02) 28%, rgba(15,12,9,0.08) 60%, rgba(15,12,9,0.50) 100%);
+}
+/* Desktop: TRUE fixed background. Photo/video + dark scrim pin to the
+   viewport itself (not just the hero box) with a negative z-index, so they
+   sit behind every normal in-flow element on the page. As you scroll, the
+   page content simply scrolls up and over them — the video never moves, it
+   just gets progressively covered from the bottom up, and reappears fully
+   once you scroll back to the very top. Because the z-index is negative,
+   ANY section below that has its own opaque background will correctly hide
+   this layer — which is why every section after the hero now has an
+   explicit solid background (see their rules below) instead of relying on
+   the page's default white showing through. */
+@media(min-width:1024px){
+  .hero{background:transparent}
+  .hero-bg{position:fixed;inset:0;z-index:-2}
+  .hero-scrim{position:fixed;inset:0;z-index:-1}
 }
 .hero-inner{position:relative;z-index:2;max-width:660px;margin-inline:0;text-align:left}
 .hero-brk{display:inline}
@@ -261,13 +278,26 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .trust-item{border-bottom:none;border-right:1px solid var(--line);justify-content:center;text-align:left}
   .trust-item:last-child{border-right:none}
 }
+/* Desktop: the hero video is now truly position:fixed and sits behind the
+   whole page (see .hero-bg above), so this card — which overlaps the very
+   bottom edge of the hero — needs a fully solid (non-transparent) background
+   instead of the frosted-glass blur used on mobile, or the frozen video would
+   keep peeking through it forever as you scroll. Same off-white colour family
+   as before, just opaque. */
+@media(min-width:1024px){
+  .trust-card{
+    background:linear-gradient(160deg,var(--bg),var(--bg-soft));
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    border-color:var(--line);
+  }
+}
 
 /* ============================= OUR WORK ============================= */
 .work{padding-bottom:52px}
 .work .section-head{margin-bottom:32px}
 .work-track-wrap{position:relative}
 .work-track{
-  display:flex;gap:14px;overflow-x:auto;
+  overflow-x:auto;
   /* Left/right padding = half the leftover viewport width either side of a card,
      so scroll-snap-align:center below can actually center every card — including
      the first and last — instead of them stopping stuck against the edge. */
@@ -276,6 +306,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   -webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
 .work-track::-webkit-scrollbar{display:none}
+.work-track-inner{display:flex;gap:14px}
 .work-item{
   position:relative;flex:0 0 auto;width:64vw;max-width:250px;
   display:flex;flex-direction:column;gap:10px;
@@ -328,27 +359,22 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .work-dots span.is-active{background:var(--gold);transform:scale(1.35)}
 .work-cta{display:flex;flex-wrap:wrap;align-items:center;gap:18px;padding-inline:20px;margin-top:6px}
 
-/* Prev/Next arrows — desktop/laptop only; mobile keeps the swipe + dots pattern */
+/* Prev/Next arrows — desktop/laptop only, shown as a centered pair BELOW the
+   card row (not overlapping it). Mobile/tablet keep the swipe + dots pattern. */
+.work-nav{display:none;justify-content:center;align-items:center;gap:14px;padding-top:6px}
 .work-arrow{
-  display:none;position:absolute;top:calc(50% - 24px);z-index:4;
-  width:46px;height:46px;border-radius:50%;
-  background:var(--bg);border:1px solid var(--line);box-shadow:var(--shadow-md);
-  align-items:center;justify-content:center;color:var(--navy);cursor:pointer;
-  transition:background .25s var(--ease),color .25s var(--ease),box-shadow .25s var(--ease),transform .15s var(--ease);
+  position:relative;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--bg);color:var(--navy);border:1px solid var(--line);
+  box-shadow:var(--shadow-md);
+  align-items:center;justify-content:center;display:flex;cursor:pointer;
+  transition:background .25s var(--ease),color .25s var(--ease),transform .15s var(--ease),box-shadow .25s var(--ease);
 }
-.work-arrow .icon{width:19px;height:19px}
-.work-arrow-prev{left:2px}
-.work-arrow-next{right:2px}
+.work-arrow .icon{width:20px;height:20px}
 @media(hover:hover){.work-arrow:hover{background:var(--gold);color:#fff;box-shadow:var(--shadow-lg)}}
-.work-arrow:active{transform:translateY(-50%) scale(0.94)}
-.work-arrow[disabled]{opacity:.35;pointer-events:none;box-shadow:none}
-@media(min-width:1024px){
-  .work-track-wrap{padding-inline:32px}
-  .work-arrow{display:flex}
-}
-@media(min-width:1180px){
-  .work-track-wrap{padding-inline:calc((100% - var(--container)) / 2 + 32px)}
-}
+.work-arrow:active{transform:scale(0.92)}
+.work-arrow[disabled]{opacity:.3;pointer-events:none;box-shadow:none}
+@media(min-width:1024px){.work-nav{display:flex}}
 @media(min-width:768px){
   /* Tablet: a bit bigger than mobile, still a horizontal scroller (~2.5 cards visible) */
   .work-track{
@@ -360,15 +386,19 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .work-cta{padding-inline:32px;margin-top:36px}
 }
 @media(min-width:1024px){
-  /* Laptop/desktop: exactly 4 cards fit in view at once — arrows (added above)
-     step through the rest instead of everything squeezing into a 2-row grid. */
+  /* Laptop/desktop: exactly 4 cards fit in view at once. overflow:hidden turns
+     .work-track into a fixed viewport (no native drag/wheel scrolling here —
+     the arrows are the only way to move it), and .work-track-inner is what
+     actually slides, moved with a plain JS-set CSS transform rather than
+     scrollLeft, which is the most reliably cross-browser way to animate this. */
   .work-track{
-    padding:2px 0 18px;
-    scroll-padding-inline:0;
-    gap:16px;
+    padding:2px max(32px,calc((100% - var(--container)) / 2)) 18px;
+    overflow-x:hidden;
   }
-  .work-item{width:calc((100% - 3*16px)/4);max-width:none}
+  .work-track-inner{gap:16px;transition:transform .45s var(--ease);will-change:transform}
+  .work-item{max-width:none;scroll-snap-align:none} /* exact width is set by JS (see script.js) */
 }
+@media(min-width:1024px){.work-dots{display:none}}
 @media(min-width:1024px){.work-dots{display:none}}
 
 /* ============================= ABOUT ============================= */
@@ -418,6 +448,46 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .founder-photo .icon{width:48px;height:48px}
   .about-founders .names{text-align:left}
   .about-founders .names strong{font-size:1.15rem}
+}
+
+/* ============================= MARQUEE ============================= */
+/* Sits between About and Services as its own thin, minimal band — the visual
+   "seam" that separates the two sections instead of them running straight
+   into each other. Two identical copies of the content sit side by side in
+   a flex row; animating that row exactly -50% (one copy's width) and then
+   snapping back to 0 is imperceptible since copy #2 is pixel-identical to
+   copy #1, giving a perfectly seamless right-to-left loop. */
+.marquee-section{
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:var(--bg-soft);
+  padding-block:20px;
+  overflow:hidden;
+  position:relative;
+}
+.marquee-section::before,.marquee-section::after{
+  content:"";position:absolute;top:0;bottom:0;width:64px;z-index:2;pointer-events:none;
+}
+.marquee-section::before{left:0;background:linear-gradient(90deg,var(--bg-soft),rgba(248,246,241,0))}
+.marquee-section::after{right:0;background:linear-gradient(270deg,var(--bg-soft),rgba(248,246,241,0))}
+.marquee-track{display:flex;width:max-content}
+.marquee-group{
+  display:flex;align-items:center;flex-shrink:0;
+  animation:marquee-scroll 28s linear infinite;
+}
+.marquee-group span{
+  font-family:'Fraunces',serif;font-weight:500;font-size:.86rem;letter-spacing:.14em;
+  color:var(--navy);white-space:nowrap;padding-inline:14px;
+}
+.marquee-group .marquee-dot{
+  font-family:'Manrope',sans-serif;color:var(--gold);font-size:.7rem;padding-inline:0;letter-spacing:0;
+}
+@keyframes marquee-scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media(prefers-reduced-motion:reduce){.marquee-group{animation:none}}
+@media(min-width:768px){
+  .marquee-section{padding-block:26px}
+  .marquee-group span{font-size:1rem;padding-inline:20px}
+  .marquee-group .marquee-dot{font-size:.8rem}
 }
 
 /* ============================= SERVICES (visual list) ============================= */
@@ -596,17 +666,34 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .lightbox-next{right:-8px;top:50%;transform:translate(50%,-50%)}
 @media(min-width:768px){.lightbox-prev{left:-56px}.lightbox-next{right:-56px}}
 
+/* ============================= PARALLAX BACKGROUNDS (Why Choose Us / Working Process) =============================
+   Classic CSS parallax: the photo (.parallax-bg) is pinned to the viewport with
+   background-attachment:fixed, so it scrolls slower than the page content sitting
+   above it — a dark gradient overlay keeps foreground text readable. On mobile,
+   background-attachment:fixed is unreliable/janky (esp. iOS Safari), so the
+   media query below switches it to a normal scrolling background there. */
+.parallax-section{position:relative;isolation:isolate;overflow:hidden}
+.parallax-bg{
+  position:absolute;inset:0;z-index:-2;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  background-attachment:fixed;
+}
+@media (max-width:768px){
+  .parallax-bg{background-attachment:scroll}
+}
+.parallax-overlay{
+  position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(17,14,10,0.88) 0%,rgba(17,14,10,0.72) 38%,rgba(17,14,10,0.86) 100%),
+    radial-gradient(120% 90% at 50% 0%,rgba(174,138,61,0.14),transparent 60%);
+}
+
 /* ============================= PROCESS ============================= */
 .process-section{
-  position:relative;isolation:isolate;overflow:hidden;color:#EDEAE2;
+  color:#EDEAE2;
   padding-bottom:48px;
 }
 @media(min-width:1024px){.process-section{padding-bottom:72px}}
-.process-section__bg{
-  position:absolute;inset:0;z-index:-2;
-  background-size:cover;background-position:center;background-repeat:no-repeat;
-  transform:scale(1.02);
-}
 .process-section::before{
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
