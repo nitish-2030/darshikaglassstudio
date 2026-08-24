@@ -4,15 +4,26 @@
   --navy-soft:#221C15;
   --gold:#AE8A3D;
   --gold-light:#DCBC7C;
+  /* AA-safe variant of --gold for small text on white/soft backgrounds —
+     the base --gold is ~3.23:1 on white (fails WCAG AA for normal text),
+     this is ~4.6:1. Only use on-light; on-dark contexts already read fine
+     with --gold or --gold-light and should keep using those. */
+  --gold-oncontrast:#8A6C2E;
+  /* RGB components of the tokens above, for rgba() use — keeps every
+     translucent navy/gold overlay tied to one source instead of the same
+     triplet retyped at each call site. */
+  --navy-rgb:23,19,16;
+  --gold-rgb:174,138,61;
+  --gold-light-rgb:220,188,124;
   --bg:#FFFFFF;
   --bg-soft:#F8F6F1;
   --text:#221F1B;
   --text-muted:#6B6560;
   --line:#EAE6DC;
   --line-strong:#DBD5C6;
-  --shadow-sm: 0 2px 10px rgba(23,19,16,0.07);
-  --shadow-md: 0 10px 30px rgba(23,19,16,0.11);
-  --shadow-lg: 0 24px 60px rgba(23,19,16,0.18);
+  --shadow-sm: 0 2px 10px rgba(var(--navy-rgb),0.07);
+  --shadow-md: 0 10px 30px rgba(var(--navy-rgb),0.11);
+  --shadow-lg: 0 24px 60px rgba(var(--navy-rgb),0.18);
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
@@ -57,7 +68,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .services-section{position:relative;overflow:hidden}
 .services-section::before{
   content:"";position:absolute;top:-140px;right:-90px;width:340px;height:420px;z-index:0;pointer-events:none;
-  border:1px solid rgba(174,138,61,0.16);border-radius:30px;
+  border:1px solid rgba(var(--gold-rgb),0.16);border-radius:30px;
   background:linear-gradient(135deg,rgba(255,255,255,0.5),rgba(255,255,255,0) 55%);
   transform:rotate(-11deg);
 }
@@ -65,7 +76,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .section-navy{background:var(--navy);color:#EDEFF2;position:relative;overflow:hidden}
 .section-navy::before,.section-navy::after{
   content:"";position:absolute;pointer-events:none;z-index:0;
-  border:1px solid rgba(174,138,61,0.22);border-radius:26px;
+  border:1px solid rgba(var(--gold-rgb),0.22);border-radius:26px;
   background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0) 60%);
 }
 .section-navy::before{width:300px;height:380px;top:-110px;right:-70px;transform:rotate(-13deg)}
@@ -76,9 +87,15 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .eyebrow{
   display:inline-flex;align-items:center;gap:10px;
   font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--gold);font-weight:600;margin-bottom:14px;
+  color:var(--gold-oncontrast);font-weight:600;margin-bottom:14px;
 }
 .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold)}
+/* "Why Choose Us" is the one section-navy block that doesn't already have
+   its own eyebrow override (hero/.process-section already set this below) —
+   on that dark background the AA-safe on-light gold is too muted, so it
+   goes back to the lighter on-dark gold here. */
+.section-navy .eyebrow{color:var(--gold-light)}
+.section-navy .eyebrow::before{background:var(--gold-light)}
 
 .section-head{max-width:640px;margin-bottom:44px;text-align:left}
 .section-head h2{font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.01em}
@@ -99,10 +116,10 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .btn .icon{width:18px;height:18px}
 .btn-gold{
   position:relative;overflow:hidden;color:var(--navy);
-  background:linear-gradient(155deg,rgba(228,197,132,0.95),rgba(174,138,61,0.92));
+  background:linear-gradient(155deg,rgba(228,197,132,0.95),rgba(var(--gold-rgb),0.92));
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,0.5);
-  box-shadow:0 10px 24px rgba(174,138,61,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+  box-shadow:0 10px 24px rgba(var(--gold-rgb),0.35), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 .btn-gold::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
@@ -110,7 +127,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 }
 .btn-gold:hover{
   background:linear-gradient(155deg,rgba(233,205,148,0.98),rgba(184,148,68,0.96));
-  box-shadow:0 14px 30px rgba(174,138,61,0.42), inset 0 1px 0 rgba(255,255,255,0.7);
+  box-shadow:0 14px 30px rgba(var(--gold-rgb),0.42), inset 0 1px 0 rgba(255,255,255,0.7);
   transform:translateY(-2px);
 }
 .btn-outline{background:rgba(255,255,255,0.08);color:#fff;border:1.5px solid rgba(255,255,255,0.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
@@ -122,7 +139,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .btn-block{width:100%}
 .btn-sm{padding:10px 18px;font-size:.85rem}
 
-.text-link{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:.9rem;color:var(--gold)}
+.text-link{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:.9rem;color:var(--gold-oncontrast)}
 .text-link .icon{width:15px;height:15px;transition:transform .3s var(--ease)}
 .text-link:hover .icon{transform:translateX(4px)}
 
@@ -131,12 +148,12 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .reveal.is-visible{opacity:1;transform:translateY(0)}
 
 /* Decorative faceted-glass motif (signature visual, used across placeholders) */
-.facet-tile{position:relative;overflow:hidden;background:linear-gradient(155deg,#1C160F 0%,#171310 55%,#221C15 100%);}
+.facet-tile{position:relative;overflow:hidden;background:linear-gradient(155deg,#1C160F 0%,var(--navy) 55%,var(--navy-soft) 100%);}
 .facet-tile.light{background:linear-gradient(155deg,#F2F0E9 0%,#F7F8FA 55%,#EFEDE4 100%)}
 .facet-tile svg{position:absolute;inset:0;width:100%;height:100%}
 .facet-tile .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(to top,rgba(11,31,51,0.72),transparent);display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
-.facet-tile .cap-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:600}
-.facet-tile .cap-title{color:#fff;font-family:'Fraunces',serif;font-size:1rem}
+.facet-tile .cap-tag,.lightbox-media .cap-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:600}
+.facet-tile .cap-title,.lightbox-media .cap-title{color:#fff;font-family:'Fraunces',serif;font-size:1rem}
 .facet-tile .glyph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .facet-tile .glyph .icon{width:34%;height:34%;color:rgba(200,155,60,0.55);stroke-width:1}
 
@@ -144,7 +161,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   padding-block:16px;
-  background:linear-gradient(180deg,rgba(23,19,16,0.38),rgba(23,19,16,0.14));
+  background:linear-gradient(180deg,rgba(var(--navy-rgb),0.38),rgba(var(--navy-rgb),0.14));
   backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
   border-bottom:1px solid rgba(255,255,255,0.10);
   transition:padding .35s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease);
@@ -160,7 +177,16 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .nav-links a:hover{color:#fff}
 .nav-links a:hover::after{width:100%}
 
-.nav-cta{display:none}
+.nav-actions{display:none;align-items:center;gap:14px}
+.nav-insta{
+  display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  border:1px solid rgba(255,255,255,0.35);color:#fff;
+  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .25s var(--ease);
+}
+.nav-insta .icon{width:17px;height:17px}
+@media(hover:hover){.nav-insta:hover{background:var(--gold);border-color:var(--gold);color:#fff;transform:translateY(-2px)}}
+.nav.scrolled .nav-insta{color:var(--navy);border-color:var(--line-strong)}
 .nav-burger{display:flex;align-items:center;justify-content:center;width:42px;height:42px;color:#fff}
 .nav-burger .icon{width:24px;height:24px}
 .nav-burger .icon-close{display:none}
@@ -168,8 +194,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .nav.scrolled{
   background:rgba(255,255,255,0.72);
   backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
-  box-shadow:0 8px 30px rgba(23,19,16,0.10);
-  border-bottom-color:rgba(23,19,16,0.06);
+  box-shadow:0 8px 30px rgba(var(--navy-rgb),0.10);
+  border-bottom-color:rgba(var(--navy-rgb),0.06);
   padding-block:12px;
 }
 .nav.scrolled .brand{color:var(--navy)}
@@ -182,7 +208,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 
 @media(min-width:1024px){
   .nav-links{display:flex}
-  .nav-cta{display:inline-flex}
+  .nav-actions{display:flex}
   .nav-burger{display:none}
 }
 
@@ -196,6 +222,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .mobile-menu.open{opacity:1;visibility:visible;transform:translateY(0);transition:opacity .4s var(--ease),transform .4s var(--ease)}
 .mobile-menu a{font-family:'Fraunces',serif;font-size:1.7rem;color:#fff;padding-block:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
 .mobile-menu .mm-actions{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+.mobile-menu .mm-social{display:flex;gap:12px;margin-top:20px}
+.mobile-menu .mm-social a{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,0.25);color:#fff;
+  transition:background .3s var(--ease),border-color .3s var(--ease)}
+.mobile-menu .mm-social a:hover{background:var(--gold);border-color:var(--gold)}
+.mobile-menu .mm-social .icon{width:19px;height:19px}
 @media(min-width:1024px){.mobile-menu{display:none}}
 
 /* ============================= HERO ============================= */
@@ -296,6 +330,15 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .work{padding-bottom:52px}
 .work .section-head{margin-bottom:32px}
 .work-track-wrap{position:relative}
+/* Soft edge fade — a quiet "there's more" hint on the right, cleaner than a
+   hard cut-off card. Sits above the track but doesn't block taps/scroll. */
+.work-track-wrap::after{
+  content:"";position:absolute;top:2px;right:0;bottom:18px;width:36px;z-index:5;
+  background:linear-gradient(to right, rgba(255,255,255,0), var(--bg));
+  pointer-events:none;
+}
+@media(min-width:768px){.work-track-wrap::after{width:56px}}
+@media(min-width:1024px){.work-track-wrap::after{width:64px}}
 .work-track{
   overflow-x:auto;
   /* Left/right padding = half the leftover viewport width either side of a card,
@@ -317,12 +360,16 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   box-shadow:var(--shadow-sm);background:var(--navy);
   transition:transform .4s var(--ease),box-shadow .4s var(--ease);
 }
-.work-media::before{
+/* Diagonal hover sheen — shared with .project-media (gallery, below) so the
+   effect is declared once instead of being copy-pasted per component. */
+.work-media::before,.project-media::before{
   content:"";position:absolute;top:0;left:-65%;width:35%;height:100%;z-index:3;pointer-events:none;
   background:linear-gradient(100deg,transparent,rgba(255,255,255,0.4),transparent);
   transform:skewX(-16deg);transition:left .75s var(--ease);
 }
-@media(hover:hover){.work-item:hover .work-media::before{left:135%}}
+@media(hover:hover){
+  .work-item:hover .work-media::before,.gallery-item:hover .project-media::before{left:135%}
+}
 .work-media img,.work-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
 .work-item:active .work-media{transform:scale(0.97)}
 @media(hover:hover){
@@ -331,6 +378,16 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 }
 .work-media video{opacity:0;transition:opacity .5s var(--ease),transform .6s var(--ease)}
 .work-media video.is-active{opacity:1}
+/* Category pill — lets the visitor tell what kind of job this is (Glass /
+   Aluminium / Interior...) at a glance, no click needed. Small and quiet on
+   purpose so it doesn't compete with the photo. */
+.work-tag{
+  position:absolute;top:10px;left:10px;z-index:4;
+  background:rgba(var(--navy-rgb),0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,0.25);
+  color:#fff;font-size:.64rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;line-height:1.3;
+}
 /* Title now sits below the card instead of overlaid on the clip/photo */
 .work-caption{font-family:'Fraunces',serif;font-size:.88rem;color:var(--text);text-align:center;padding-inline:4px;line-height:1.3}
 /* Play/pause affordance: centered like a standard video-thumbnail play button,
@@ -338,7 +395,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .work-media .clip-badge{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   width:52px;height:52px;border-radius:50%;
-  background:rgba(23,19,16,0.45);backdrop-filter:blur(6px);
+  background:rgba(var(--navy-rgb),0.45);backdrop-filter:blur(6px);
   border:1.5px solid rgba(255,255,255,0.75);box-shadow:0 4px 16px rgba(0,0,0,0.3);
   color:#fff;display:flex;align-items:center;justify-content:center;
   transition:background .3s var(--ease),opacity .3s var(--ease),transform .3s var(--ease);
@@ -346,7 +403,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .work-media .clip-badge .icon{width:20px;height:20px;margin-left:3px}
 .work-media .clip-badge .icon-pause{display:none;margin-left:0}
 .work-item.is-playing .work-media .clip-badge{
-  width:40px;height:40px;background:rgba(23,19,16,0.55);opacity:0.85;
+  width:40px;height:40px;background:rgba(var(--navy-rgb),0.55);opacity:0.85;
   transform:translate(-50%,-50%) scale(1);
 }
 .work-item.is-playing .work-media .clip-badge .icon{width:15px;height:15px}
@@ -359,22 +416,36 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .work-dots span.is-active{background:var(--gold);transform:scale(1.35)}
 .work-cta{display:flex;flex-wrap:wrap;align-items:center;gap:18px;padding-inline:20px;margin-top:6px}
 
-/* Prev/Next arrows — desktop/laptop only, shown as a centered pair BELOW the
-   card row (not overlapping it). Mobile/tablet keep the swipe + dots pattern. */
-.work-nav{display:none;justify-content:center;align-items:center;gap:14px;padding-top:6px}
+/* Prev/Next arrows — shown at EVERY screen size now (used to be desktop-only,
+   which is why they'd vanish on resize/smaller viewports). The track itself
+   is a plain native horizontal scroller (overflow-x:auto + scroll-snap) at
+   every breakpoint, so touch swipe, trackpad, the arrows and mouse click-drag
+   (see script.js) all just move the same scrollLeft — nothing switches to a
+   separate JS-transform "desktop mode" any more. */
+.work-nav{display:flex;justify-content:center;align-items:center;gap:12px;padding-top:6px}
 .work-arrow{
   position:relative;
-  width:48px;height:48px;border-radius:50%;
+  width:42px;height:42px;border-radius:50%;
   background:var(--bg);color:var(--navy);border:1px solid var(--line);
   box-shadow:var(--shadow-md);
   align-items:center;justify-content:center;display:flex;cursor:pointer;
   transition:background .25s var(--ease),color .25s var(--ease),transform .15s var(--ease),box-shadow .25s var(--ease);
 }
-.work-arrow .icon{width:20px;height:20px}
+.work-arrow .icon{width:18px;height:18px}
 @media(hover:hover){.work-arrow:hover{background:var(--gold);color:#fff;box-shadow:var(--shadow-lg)}}
 .work-arrow:active{transform:scale(0.92)}
 .work-arrow[disabled]{opacity:.3;pointer-events:none;box-shadow:none}
-@media(min-width:1024px){.work-nav{display:flex}}
+@media(min-width:768px){.work-arrow{width:48px;height:48px}.work-arrow .icon{width:20px;height:20px}}
+
+/* Mouse click-and-drag now works at any size, because the track is a real
+   scroll container everywhere — this just gives it a grab cursor and turns
+   off snap-while-dragging so the drag feels smooth instead of sticky. */
+@media(hover:hover){
+  .work-track{cursor:grab}
+  .work-track.is-dragging{cursor:grabbing}
+}
+.work-track.is-dragging{scroll-snap-type:none;user-select:none}
+
 @media(min-width:768px){
   /* Tablet: a bit bigger than mobile, still a horizontal scroller (~2.5 cards visible) */
   .work-track{
@@ -386,19 +457,11 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .work-cta{padding-inline:32px;margin-top:36px}
 }
 @media(min-width:1024px){
-  /* Laptop/desktop: exactly 4 cards fit in view at once. overflow:hidden turns
-     .work-track into a fixed viewport (no native drag/wheel scrolling here —
-     the arrows are the only way to move it), and .work-track-inner is what
-     actually slides, moved with a plain JS-set CSS transform rather than
-     scrollLeft, which is the most reliably cross-browser way to animate this. */
-  .work-track{
-    padding:2px max(32px,calc((100% - var(--container)) / 2)) 18px;
-    overflow-x:hidden;
-  }
-  .work-track-inner{gap:16px;transition:transform .45s var(--ease);will-change:transform}
-  .work-item{max-width:none;scroll-snap-align:none} /* exact width is set by JS (see script.js) */
+  /* Laptop/desktop: still the same native scroll strip as every other size —
+     just sized so ~4 cards show at once. */
+  .work-track-inner{gap:16px}
+  .work-item{width:22vw;max-width:264px}
 }
-@media(min-width:1024px){.work-dots{display:none}}
 @media(min-width:1024px){.work-dots{display:none}}
 
 /* ============================= ABOUT ============================= */
@@ -407,10 +470,10 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .about-visual .facet-tile{border-radius:var(--radius-lg);aspect-ratio:4/3;box-shadow:var(--shadow-lg);position:relative;z-index:2}
 .about-visual .glass-pane{
   position:absolute;border-radius:var(--radius-lg);z-index:1;pointer-events:none;
-  background:linear-gradient(135deg,rgba(255,255,255,0.32) 0%,rgba(174,138,61,0.12) 55%,rgba(174,138,61,0.02) 100%);
+  background:linear-gradient(135deg,rgba(255,255,255,0.32) 0%,rgba(var(--gold-rgb),0.12) 55%,rgba(var(--gold-rgb),0.02) 100%);
   border:1px solid rgba(255,255,255,0.55);
   backdrop-filter:blur(1px);
-  box-shadow:0 20px 45px rgba(23,19,16,0.12), inset 0 1px 0 rgba(255,255,255,0.7);
+  box-shadow:0 20px 45px rgba(var(--navy-rgb),0.12), inset 0 1px 0 rgba(255,255,255,0.7);
 }
 .about-visual .glass-pane.p1{top:-24px;right:-22px;width:58%;height:56%;transform:rotate(-7deg)}
 .about-visual .glass-pane.p2{bottom:-20px;left:-18px;width:40%;height:38%;transform:rotate(9deg);
@@ -458,9 +521,9 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
    snapping back to 0 is imperceptible since copy #2 is pixel-identical to
    copy #1, giving a perfectly seamless right-to-left loop. */
 .marquee-section{
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-  background:var(--bg-soft);
+  border-top:1px solid rgba(255,255,255,0.08);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  background:var(--navy);
   padding-block:20px;
   overflow:hidden;
   position:relative;
@@ -468,8 +531,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .marquee-section::before,.marquee-section::after{
   content:"";position:absolute;top:0;bottom:0;width:64px;z-index:2;pointer-events:none;
 }
-.marquee-section::before{left:0;background:linear-gradient(90deg,var(--bg-soft),rgba(248,246,241,0))}
-.marquee-section::after{right:0;background:linear-gradient(270deg,var(--bg-soft),rgba(248,246,241,0))}
+.marquee-section::before{left:0;background:linear-gradient(90deg,var(--navy),rgba(var(--navy-rgb),0))}
+.marquee-section::after{right:0;background:linear-gradient(270deg,var(--navy),rgba(var(--navy-rgb),0))}
 .marquee-track{display:flex;width:max-content}
 .marquee-group{
   display:flex;align-items:center;flex-shrink:0;
@@ -477,7 +540,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 }
 .marquee-group span{
   font-family:'Fraunces',serif;font-weight:500;font-size:.86rem;letter-spacing:.14em;
-  color:var(--navy);white-space:nowrap;padding-inline:14px;
+  color:var(--gold-light);white-space:nowrap;padding-inline:14px;
 }
 .marquee-group .marquee-dot{
   font-family:'Manrope',sans-serif;color:var(--gold);font-size:.7rem;padding-inline:0;letter-spacing:0;
@@ -571,10 +634,10 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .filter-btn{
   position:relative;overflow:hidden;
   padding:10px 20px;border-radius:100px;font-size:.83rem;font-weight:500;
-  border:1px solid rgba(23,19,16,0.12);color:var(--text-muted);
+  border:1px solid rgba(var(--navy-rgb),0.12);color:var(--text-muted);
   background:linear-gradient(160deg,rgba(255,255,255,0.85),rgba(255,255,255,0.35));
   backdrop-filter:blur(10px) saturate(170%);-webkit-backdrop-filter:blur(10px) saturate(170%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -5px 8px rgba(23,19,16,0.05), 0 3px 8px rgba(23,19,16,0.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -5px 8px rgba(var(--navy-rgb),0.05), 0 3px 8px rgba(var(--navy-rgb),0.07);
   transition:all .3s var(--ease);
 }
 .filter-btn::before{
@@ -583,9 +646,9 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 }
 .filter-btn:hover{border-color:var(--gold);color:var(--navy)}
 .filter-btn.active{
-  color:var(--navy);border-color:rgba(174,138,61,0.55);
-  background:linear-gradient(160deg,rgba(233,205,148,0.92),rgba(174,138,61,0.82));
-  box-shadow:0 6px 16px rgba(174,138,61,0.32), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -4px 8px rgba(90,66,20,0.18);
+  color:var(--navy);border-color:rgba(var(--gold-rgb),0.55);
+  background:linear-gradient(160deg,rgba(233,205,148,0.92),rgba(var(--gold-rgb),0.82));
+  box-shadow:0 6px 16px rgba(var(--gold-rgb),0.32), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -4px 8px rgba(90,66,20,0.18);
 }
 
 /* Asymmetric masonry: CSS columns + varied aspect ratios so real photos read as
@@ -614,17 +677,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .gallery-item.h-med .project-media{aspect-ratio:3/3.6}
 .project-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
 @media(hover:hover){.gallery-item:hover .project-media img{transform:scale(1.06)}}
-.project-media::before{
-  content:"";position:absolute;top:0;left:-65%;width:35%;height:100%;z-index:3;pointer-events:none;
-  background:linear-gradient(100deg,transparent,rgba(255,255,255,0.4),transparent);
-  transform:skewX(-16deg);transition:left .75s var(--ease);
-}
-@media(hover:hover){.gallery-item:hover .project-media::before{left:135%}}
-/* Graceful fallback until a real photo is added at the given path */
-.gallery-item.img-missing .project-media{background:linear-gradient(155deg,rgba(174,138,61,0.22),rgba(23,19,16,0.94))}
+/* (hover sheen for .project-media::before is defined once, shared with
+   .work-media::before, near the Our Work strip styles above) */
+/* Graceful fallback until a real photo is added at the given path — same
+   gradient reused by the lightbox's img-missing state below. */
+.gallery-item.img-missing .project-media,.lightbox-media.img-missing{background:linear-gradient(155deg,rgba(var(--gold-rgb),0.22),rgba(var(--navy-rgb),0.94))}
 .gallery-item.img-missing .project-media img{display:none}
 
-.project-media .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:14px 16px;background:linear-gradient(to top,rgba(23,19,16,0.85),transparent 65%);display:flex;flex-direction:column;gap:2px}
+.project-media .cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:14px 16px;background:linear-gradient(to top,rgba(var(--navy-rgb),0.85),transparent 65%);display:flex;flex-direction:column;gap:2px}
 .project-media .cap-tag{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:600}
 .project-media .cap-title{color:#fff;font-family:'Fraunces',serif;font-size:.98rem;line-height:1.3}
 
@@ -650,11 +710,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .lightbox-body{position:relative;width:100%;max-width:640px}
 .lightbox-media{position:relative;border-radius:var(--radius-lg);overflow:hidden;aspect-ratio:4/3;box-shadow:var(--shadow-lg);background:var(--navy)}
 .lightbox-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.lightbox-media.img-missing{background:linear-gradient(155deg,rgba(174,138,61,0.22),rgba(23,19,16,0.94))}
 .lightbox-media.img-missing img{display:none}
 .lightbox-media .cap{position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(to top,rgba(11,31,51,0.72),transparent);display:flex;flex-direction:column;gap:2px}
-.lightbox-media .cap-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:600}
-.lightbox-media .cap-title{color:#fff;font-family:'Fraunces',serif;font-size:1rem}
 .lightbox-close,.lightbox-prev,.lightbox-next{
   position:absolute;color:#fff;width:44px;height:44px;border-radius:50%;
   background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);
@@ -685,7 +742,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
     linear-gradient(180deg,rgba(17,14,10,0.88) 0%,rgba(17,14,10,0.72) 38%,rgba(17,14,10,0.86) 100%),
-    radial-gradient(120% 90% at 50% 0%,rgba(174,138,61,0.14),transparent 60%);
+    radial-gradient(120% 90% at 50% 0%,rgba(var(--gold-rgb),0.14),transparent 60%);
 }
 
 /* ============================= PROCESS ============================= */
@@ -698,7 +755,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
     linear-gradient(180deg,rgba(17,14,10,0.92) 0%,rgba(17,14,10,0.80) 38%,rgba(17,14,10,0.90) 100%),
-    radial-gradient(120% 90% at 50% 0%,rgba(174,138,61,0.14),transparent 60%);
+    radial-gradient(120% 90% at 50% 0%,rgba(var(--gold-rgb),0.14),transparent 60%);
 }
 .process-section .eyebrow{color:var(--gold-light)}
 .process-section .eyebrow::before{background:var(--gold-light)}
@@ -708,14 +765,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .process-list{list-style:none;position:relative;display:flex;flex-direction:column}
 .process-list::before{
   content:"";position:absolute;left:27px;top:6px;bottom:6px;width:2px;
-  background:repeating-linear-gradient(to bottom,rgba(220,188,124,0.4) 0 6px,transparent 6px 12px);
+  background:repeating-linear-gradient(to bottom,rgba(var(--gold-light-rgb),0.4) 0 6px,transparent 6px 12px);
 }
 .process-item{display:flex;gap:18px;padding-block:18px;position:relative;align-items:flex-start}
 .process-visual{position:relative;flex-shrink:0}
 .process-icon{
   width:54px;height:54px;border-radius:50%;position:relative;z-index:1;
   background:rgba(255,255,255,0.06);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  border:1.5px solid rgba(220,188,124,0.45);color:var(--gold-light);
+  border:1.5px solid rgba(var(--gold-light-rgb),0.45);color:var(--gold-light);
   display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.35);
   transition:transform .4s var(--ease),box-shadow .4s var(--ease),background .4s var(--ease);
 }
@@ -725,7 +782,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   background:var(--gold);color:var(--navy);font-family:'Fraunces',serif;font-weight:700;font-size:.66rem;
   display:flex;align-items:center;justify-content:center;border:2px solid rgba(17,14,10,0.9);box-shadow:0 2px 8px rgba(0,0,0,0.4);
 }
-.process-item:hover .process-icon{transform:translateY(-3px) scale(1.06);box-shadow:0 12px 30px rgba(0,0,0,0.45);background:rgba(220,188,124,0.14)}
+.process-item:hover .process-icon{transform:translateY(-3px) scale(1.06);box-shadow:0 12px 30px rgba(0,0,0,0.45);background:rgba(var(--gold-light-rgb),0.14)}
 .process-body{padding-top:5px}
 .process-body h3{font-size:1rem;margin-bottom:4px;color:#fff}
 .process-body p{color:#C9C2B4;font-size:.85rem;line-height:1.45;max-width:44ch}
@@ -760,8 +817,14 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;
   padding:22px 4px;text-align:left;font-weight:500;font-size:1rem;color:var(--navy);
 }
-.faq-q .chev{width:20px;height:20px;color:var(--gold);flex-shrink:0;transition:transform .35s var(--ease)}
-.faq-item.open .faq-q .chev{transform:rotate(135deg)}
+/* Plus/minus toggle, right-aligned by the flex space-between on .faq-q above —
+   the plus is two bars; opening the panel rotates the vertical bar flat onto
+   the horizontal one, leaving a clean minus sign. */
+.faq-toggle{position:relative;width:20px;height:20px;flex-shrink:0}
+.faq-toggle .bar{position:absolute;top:50%;left:50%;background:var(--gold);border-radius:1px;transition:transform .35s var(--ease)}
+.faq-toggle .bar-h{width:12px;height:2px;transform:translate(-50%,-50%)}
+.faq-toggle .bar-v{width:2px;height:12px;transform:translate(-50%,-50%)}
+.faq-item.open .faq-toggle .bar-v{transform:translate(-50%,-50%) rotate(90deg)}
 .faq-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
 .faq-item.open .faq-panel{grid-template-rows:1fr}
 .faq-panel-inner{overflow:hidden}
@@ -802,6 +865,10 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .field-row{display:grid;grid-template-columns:1fr;gap:14px}
 @media(min-width:560px){.field-row{grid-template-columns:1fr 1fr}}
 .field select{font-size:.82rem;padding-right:10px}
+.field-consent{margin-bottom:20px}
+.field-consent label{display:flex;gap:10px;align-items:flex-start;font-size:.8rem;line-height:1.5;color:#B9C2CE;cursor:pointer;margin-bottom:0}
+.field-consent input[type="checkbox"]{width:16px;height:16px;min-width:16px;margin-top:2px;accent-color:var(--gold);cursor:pointer}
+.field-consent a{color:var(--gold)}
 .form-note{font-size:.76rem;color:#8492A1;margin-top:12px;text-align:center}
 .form-success{display:none;text-align:center;padding:20px 0}
 .form-success.show{display:block}
@@ -834,17 +901,17 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .footer-col--services{grid-area:services}
 .footer-col--contact{grid-area:contact}
 .footer-brand .brand{color:#fff;margin-bottom:10px}
-.footer-brand .brand-mark{box-shadow:0 0 0 1px rgba(174,138,61,0.35), 0 4px 16px rgba(174,138,61,0.25)}
+.footer-brand .brand-mark{box-shadow:0 0 0 1px rgba(var(--gold-rgb),0.35), 0 4px 16px rgba(var(--gold-rgb),0.25)}
 .footer-brand p{font-size:.86rem;max-width:40ch;color:#9CA7B3}
 .social-row{display:flex;gap:10px;margin-top:16px}
 .social-row a{
-  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   color:#EDEFF2;border:1px solid rgba(255,255,255,0.18);
   background:linear-gradient(155deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.14);
   transition:all .3s var(--ease);
 }
-.social-row a:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);box-shadow:0 4px 16px rgba(174,138,61,0.4)}
+.social-row a:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);box-shadow:0 4px 16px rgba(var(--gold-rgb),0.4)}
 .social-row .icon{width:15px;height:15px}
 .footer h4{color:#fff;font-family:'Manrope',sans-serif;font-weight:600;font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:13px}
 .footer-links{display:flex;flex-direction:column;gap:9px}
@@ -924,7 +991,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .modal-card{border-radius:24px;transform:translateY(16px) scale(.98)}
   .modal.open .modal-card{transform:translateY(0) scale(1)}
 }
-.modal-close{position:absolute;top:0;right:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+.modal-close{position:absolute;top:0;right:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
 .modal-card{position:relative}
 .modal-icon{width:52px;height:52px;border-radius:14px;background:rgba(200,155,60,0.12);color:var(--gold);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
 .modal-icon .icon{width:26px;height:26px}
@@ -941,4 +1008,4 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .privacy-body a{color:var(--gold);text-decoration:underline}
 .privacy-list{margin:8px 0 6px;padding-left:20px;list-style:disc;color:var(--text-muted)}
 .privacy-list li{margin-bottom:6px}
-.privacy-list strong{color:var(--navy)}
+.privacy-list strong{color:var(--navy)}

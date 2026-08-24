@@ -22,10 +22,17 @@
 <!-- Favicon: inline SVG diamond mark, zero extra request -->
 <link rel="icon" href="assets/brand/favicon.png">
 
-<!-- Fonts: Playfair Display (display) + Poppins (body/UI), weights trimmed for payload -->
+<!-- Fonts: Playfair Display (display) + Poppins (body/UI), weights trimmed for payload.
+     Loaded as a non-render-blocking stylesheet (preload + swap-on-load) so it
+     fetches in parallel with style.css instead of the two stylesheets being
+     requested one after another — style.css (which controls layout) isn't
+     held up waiting on the Google Fonts CSS to arrive. The <noscript> fallback
+     keeps fonts working if JS is disabled. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"></noscript>
 
 <!-- Structured data for local SEO -->
 <script type="application/ld+json">
@@ -102,7 +109,10 @@
       <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
     </nav>
-    <a href="#contact" class="btn btn-gold btn-sm nav-cta">Get Free Quote</a>
+    <div class="nav-actions">
+      <a href="https://www.instagram.com/darshikaglassstudio/?hl=en" target="_blank" rel="noopener" class="nav-insta" aria-label="Instagram"><svg class="icon" aria-hidden="true"><use href="#i-insta"/></svg></a>
+      <a href="#contact" class="btn btn-gold btn-sm nav-cta">Get Free Quote</a>
+    </div>
     <button class="nav-burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false">
       <svg class="icon icon-menu" aria-hidden="true"><use href="#i-menu"/></svg>
       <svg class="icon icon-close" aria-hidden="true"><use href="#i-close"/></svg>
@@ -121,6 +131,9 @@
   <div class="mm-actions">
     <a href="tel:+919755054649" class="btn btn-outline">Call Now</a>
     <a href="#contact" class="btn btn-gold">Get Free Quote</a>
+  </div>
+  <div class="mm-social">
+    <a href="https://www.instagram.com/darshikaglassstudio/?hl=en" target="_blank" rel="noopener" aria-label="Instagram"><svg class="icon" aria-hidden="true"><use href="#i-insta"/></svg></a>
   </div>
 </div>
 
@@ -284,7 +297,7 @@
 
     <div class="filter-row reveal" id="filterRow">
       <button class="filter-btn" data-filter="all">All</button>
-      <button class="filter-btn active" data-filter="glass">Glass</button>
+      <button class="filter-btn" data-filter="glass">Glass</button>
       <button class="filter-btn" data-filter="interior">Interior</button>
       <button class="filter-btn" data-filter="mirrors">Mirrors</button>
       <button class="filter-btn" data-filter="aluminium">Aluminium</button>
@@ -396,8 +409,14 @@
               </div>
             </div>
             <div class="field"><label for="qMsg">Message</label><textarea id="qMsg" rows="3" placeholder="Briefly describe your space and requirement"></textarea></div>
+            <div class="field field-consent">
+              <label>
+                <input type="checkbox" id="qConsent" required>
+                <span>I agree to share these details via WhatsApp as described in the <a href="privacy.html">Privacy Policy</a>.</span>
+              </label>
+            </div>
             <button type="submit" class="btn btn-gold btn-block"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Send Enquiry on WhatsApp</button>
-            <p class="form-note">Sends your details straight to our WhatsApp — no account needed. No data is stored on our server. See our <a href="privacy.html" style="color:var(--gold);text-decoration:underline">Privacy Policy</a>.</p>
+            <p class="form-note">Sends your details straight to our WhatsApp — no account needed. No data is stored on our server. Quotes shared are estimates; final pricing is confirmed after our free site visit. See our <a href="privacy.html" style="color:var(--gold);text-decoration:underline">Privacy Policy</a>.</p>
           </div>
 
           <div class="form-success" id="formSuccess">
@@ -495,4 +514,4 @@
 
 <script src="script.js"></script>
 </body>
-</html>
+</html>

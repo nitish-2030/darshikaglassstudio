@@ -25,11 +25,11 @@
      type:'video' tiles need a poster (shown instantly) + a small mp4 (plays once visible). */
   var WORK = [
     {type:'video', src:'assets/work/clip-1-web.mp4', poster:'assets/work/clip-1-poster.webp', tag:'Glass Work', title:'Premium Salon Interior'}, 
-    {type:'video', src:'assets/work/clip-2-web.mp4', poster:'assets/work/clip-2-poster.webp', tag:'Aluminium', title:'Custom Designed Glasses'},
-    {type:'video', src:'assets/work/clip-3-web.mp4', poster:'assets/work/clip-3-poster.webp', tag:'Aluminium + glass', title:'Shower Cubicle Fit'},
-    {type:'video', src:'assets/work/clip-4-web.mp4', poster:'assets/work/clip-4-poster.webp', tag:'Interior', title:'LED Touch Mirror'},
-    {type:'video', src:'assets/work/clip-5-web.mp4', poster:'assets/work/clip-5-poster.webp', tag:'LED Mirror', title:'Foldable Glass Door'},
-    {type:'video', src:'assets/work/clip-6-web.mp4', poster:'assets/work/clip-6-poster.webp', tag:'Interior', title:'Wave Fountain'}
+    {type:'video', src:'assets/work/clip-2-web.mp4', poster:'assets/work/clip-2-poster.webp', tag:'Aluminium + glass', title:'Custom Designed Glasses'},
+    {type:'video', src:'assets/work/clip-3-web.mp4', poster:'assets/work/clip-3-poster.webp', tag:'Interior', title:'Complete Interior'},
+    {type:'video', src:'assets/work/clip-4-web.mp4', poster:'assets/work/clip-4-poster.webp', tag:'Digital Mirror', title:'LED Touch Mirror'},
+    {type:'video', src:'assets/work/clip-5-web.mp4', poster:'assets/work/clip-5-poster.webp', tag:'Glass', title:'Foldable Glass Door'},
+    {type:'video', src:'assets/work/clip-6-web.mp4', poster:'assets/work/clip-6-poster.webp', tag:'Fountain', title:'Wave Fountain'}
   ];
 
   /* ---------- Featured Projects data ----------
@@ -49,7 +49,7 @@
     {image:'assets/projects/glass-partition-living-room.webp', title:'Living Room Partition', category:'Glass', location:'Sidhi'},
     {image:'assets/projects/aluminium-shopfront-frame.webp', title:'Shopfront Frame', category:'Aluminium', location:'Sidhi'},
     {image:'assets/projects/bedroom-mirror-feature-wall.webp', title:'Bedroom Feature Wall', category:'Mirrors', location:''},
-    {image:'assets/projects/office-cabin-interior.webp', title:'Office Cabin Layout', category:'Interior', location:'Sidhi'},
+    {image:'assets/projects/office-cabin-interior.webp', title:'Office Cabin Layout', category:'Ceiling', location:'Sidhi'},
     {image:'assets/projects/pvc-false-ceiling-hall.webp', title:'PVC False Ceiling', category:'Ceiling', location:''},
     {image:'assets/projects/shower-cubicle-glass.webp', title:'Shower Cubicle', category:'Glass', location:''},
     {image:'assets/projects/modular-wardrobe-interior.webp', title:'Modular Wardrobe', category:'Interior', location:'Majhauli'},
@@ -57,7 +57,10 @@
     {image:'assets/projects/salon-digital-mirror.webp', title:'Salon Digital Mirror', category:'Mirrors', location:'Sidhi'},
     {image:'assets/projects/accent-wallpaper-bedroom.webp', title:'Accent Wallpaper', category:'Interior', location:''},
     {image:'assets/projects/gypsum-led-cove-ceiling.webp', title:'Gypsum + LED Cove', category:'Ceiling', location:'Sidhi'},
-    {image:'assets/projects/staircase-glass-railing.webp', title:'Staircase Railing', category:'Glass', location:''}
+    {image:'assets/projects/staircase-glass-railing.webp', title:'Staircase Railing', category:'Glass', location:''},
+    {image:'assets/projects/Luxury-Bedroom.webp', title:'Luxury Bedroom', category:'Interior', location:'sidhi'},
+    {image:'assets/projects/aluminium-railing.webp', title:'Aluminium Railing', category:'Aluminium', location:'sidhi'},
+    {image:'assets/projects/mirror.webp', title:'Designing Mirror', category:'Mirrors', location:''}
   ];
 
   var FAQS = [
@@ -81,12 +84,22 @@
         '<div class="work-media">'+
           '<img src="'+w.poster+'" alt="" loading="lazy">'+
           '<video muted loop playsinline preload="none" poster="'+w.poster+'"><source data-src="'+w.src+'" type="video/mp4"></video>'+
+          (w.tag ? '<span class="work-tag">'+w.tag+'</span>' : '')+
           '<span class="clip-badge"><svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg></span>'+
         '</div>'+
         '<p class="work-caption">'+w.title+'</p>';
+      /* Keyboard users need a way to reach and trigger this the same as a
+         click (play/pause) — a plain div has no default focus or key
+         behaviour, so both are added explicitly. */
+      item.setAttribute('tabindex','0');
+      item.setAttribute('role','button');
+      item.setAttribute('aria-label','Play video: '+w.title);
     } else {
       item.innerHTML =
-        '<div class="work-media"><img src="'+w.src+'" alt="'+w.title+'" loading="lazy"></div>'+
+        '<div class="work-media">'+
+          '<img src="'+w.src+'" alt="'+w.title+'" loading="lazy">'+
+          (w.tag ? '<span class="work-tag">'+w.tag+'</span>' : '')+
+        '</div>'+
         '<p class="work-caption">'+w.title+'</p>';
     }
     workTrackInner.appendChild(item);
@@ -98,112 +111,149 @@
      grid with overflow:visible, not a clipped scroll strip, so most/all
      6 videos counted as "in view" on page load and all downloaded at once.
      That was the 6-video simultaneous-load problem.) */
+  /* Stopping a clip (manually, by switching to another one, or by scrolling
+     out of view) resets it back to the poster frame rather than freezing on
+     whatever frame it happened to stop at — keeps the grid looking like a
+     curated set of thumbnails rather than a trail of random paused frames. */
+  function stopWorkClip(item){
+    var v = item.querySelector('video');
+    if(!v) return;
+    v.pause();
+    try{ v.currentTime = 0; }catch(err){}
+    v.classList.remove('is-active');
+    item.classList.remove('is-playing');
+  }
+
   document.querySelectorAll('.work-item').forEach(function(item){
     var v = item.querySelector('video');
     if(!v) return;
     var src = v.querySelector('source');
-    item.addEventListener('click', function(){
-      /* Toggle: if this clip is already playing, clicking it again stops it. */
+    function toggleWorkClip(){
+      /* Toggle: if this clip is already playing, activating it again stops it. */
       if(!v.paused && !v.ended){
-        v.pause();
-        item.classList.remove('is-playing');
+        stopWorkClip(item);
         return;
       }
       if(src && src.dataset.src && !v.currentSrc){ src.src = src.dataset.src; v.load(); }
       document.querySelectorAll('.work-item.is-playing').forEach(function(otherItem){
-        if(otherItem !== item){
-          var otherV = otherItem.querySelector('video');
-          if(otherV){ otherV.pause(); }
-          otherItem.classList.remove('is-playing');
-        }
+        if(otherItem !== item) stopWorkClip(otherItem);
       });
       v.play().then(function(){ v.classList.add('is-active'); item.classList.add('is-playing'); }).catch(function(){});
+    }
+    item.addEventListener('click', function(){
+      /* A click that was actually a mouse-drag (see enableWorkDrag below)
+         shouldn't also toggle play/pause. */
+      if(workDragSuppressClick){ workDragSuppressClick = false; return; }
+      toggleWorkClip();
+    });
+    /* Keyboard equivalent of the click above — Enter and Space are the
+       standard activation keys for a role="button" element. Space also
+       scrolls the page by default, so that has to be prevented. */
+    item.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault();
+        toggleWorkClip();
+      }
     });
   });
 
-  /* Prev/Next arrows for the desktop/laptop 4-up view. Below 1024px this is a
-     no-op — native touch/trackpad swipe (scrollLeft on .work-track) handles
-     it instead, unchanged from before.
+  /* Prev/Next arrows + mouse drag, for EVERY screen size.
 
-     At 1024px+, .work-track becomes a fixed-width, overflow:hidden viewport
-     and .work-track-inner (the actual flex row of cards) is moved with a
-     plain CSS `transform: translateX()` set directly from JS. This is used
-     instead of scrollLeft because scrollLeft's behaviour on an
-     overflow:hidden element is inconsistent across browsers — a transform
-     is guaranteed to work everywhere and is simple to reason about: index 0
-     shows cards 1-4, "Next" moves the index up by one (revealing card 5,
-     hiding card 1), "Prev" moves it back down. */
+     .work-track is a plain native horizontal scroller (overflow-x:auto with
+     scroll-snap) at every breakpoint now — there's no separate "desktop
+     mode" any more. That used to be a fixed-width, overflow:hidden viewport
+     moved with a JS transform, which only responded to the arrow buttons,
+     and the buttons themselves were hidden below 1024px — so on any smaller
+     or resized view there was no way to move the strip at all except touch.
+
+     Now: arrows call scrollBy() one card at a time, touch keeps using native
+     momentum scrolling untouched, and enableWorkDrag() below adds
+     click-and-drag with a mouse (which browsers don't support natively on a
+     scroll container the way touch is). */
   var workPrevBtn = document.getElementById('workPrev');
   var workNextBtn = document.getElementById('workNext');
-  var WORK_VISIBLE = 4;
-  var WORK_GAP = 16;
-  var workIndex = 0;
+  var workDragSuppressClick = false;
 
-  function isWorkDesktop(){ return window.innerWidth >= 1024; }
-
-  function workMaxIndex(){
-    var items = workTrackInner.querySelectorAll('.work-item');
-    return Math.max(0, items.length - WORK_VISIBLE);
+  function workCardStep(){
+    var item = workTrackInner.querySelector('.work-item');
+    if(!item) return workTrack.clientWidth;
+    var gapStyle = getComputedStyle(workTrackInner);
+    var gap = parseFloat(gapStyle.columnGap || gapStyle.gap) || 0;
+    return item.getBoundingClientRect().width + gap;
   }
 
-  function sizeWorkCardsForDesktop(){
-    if(!isWorkDesktop()){
-      // Leaving desktop mode (e.g. window resized narrower): clear all the
-      // inline styles JS added so mobile/tablet CSS takes back over untouched.
-      workTrackInner.style.transform = '';
-      workTrackInner.querySelectorAll('.work-item').forEach(function(item){ item.style.width = ''; });
-      return;
-    }
-    var trackStyles = getComputedStyle(workTrack);
-    var padLeft = parseFloat(trackStyles.paddingLeft) || 0;
-    var padRight = parseFloat(trackStyles.paddingRight) || 0;
-    var viewportWidth = workTrack.clientWidth - padLeft - padRight;
-    var itemWidth = (viewportWidth - WORK_GAP * (WORK_VISIBLE - 1)) / WORK_VISIBLE;
-    workTrackInner.querySelectorAll('.work-item').forEach(function(item){
-      item.style.width = itemWidth + 'px';
-    });
-  }
-
-  function renderWorkPosition(animate){
-    if(!isWorkDesktop()) return;
-    var items = workTrackInner.querySelectorAll('.work-item');
-    if(!items.length) return;
-    var itemWidth = items[0].getBoundingClientRect().width;
-    var offset = workIndex * (itemWidth + WORK_GAP);
-    workTrackInner.style.transition = animate === false ? 'none' : '';
-    workTrackInner.style.transform = 'translateX(' + (-offset) + 'px)';
-    if(workPrevBtn) workPrevBtn.disabled = workIndex <= 0;
-    if(workNextBtn) workNextBtn.disabled = workIndex >= workMaxIndex();
+  function updateWorkArrows(){
+    if(!workPrevBtn || !workNextBtn) return;
+    var maxScroll = workTrack.scrollWidth - workTrack.clientWidth - 1;
+    workPrevBtn.disabled = workTrack.scrollLeft <= 1;
+    workNextBtn.disabled = maxScroll <= 1 || workTrack.scrollLeft >= maxScroll;
   }
 
   function goWork(dir){
-    workIndex = Math.min(Math.max(workIndex + dir, 0), workMaxIndex());
-    renderWorkPosition(true);
+    workTrack.scrollBy({ left: dir * workCardStep(), behavior: 'smooth' });
   }
 
   if(workTrack && workTrackInner && workPrevBtn && workNextBtn){
     workPrevBtn.addEventListener('click', function(){ goWork(-1); });
     workNextBtn.addEventListener('click', function(){ goWork(1); });
 
+    var workScrollTicking = false;
+    workTrack.addEventListener('scroll', function(){
+      if(workScrollTicking) return;
+      workScrollTicking = true;
+      requestAnimationFrame(function(){ updateWorkArrows(); workScrollTicking = false; });
+    }, {passive:true});
+
     var workResizeTimer = null;
     window.addEventListener('resize', function(){
       clearTimeout(workResizeTimer);
-      workResizeTimer = setTimeout(function(){
-        workIndex = Math.min(workIndex, workMaxIndex());
-        sizeWorkCardsForDesktop();
-        renderWorkPosition(false);
-      }, 120);
+      workResizeTimer = setTimeout(updateWorkArrows, 120);
     });
 
-    // Initial layout. Fonts/webfont swap can shift measured widths slightly,
-    // so re-run once more shortly after load to correct for that.
-    sizeWorkCardsForDesktop();
-    renderWorkPosition(false);
-    window.addEventListener('load', function(){
-      sizeWorkCardsForDesktop();
-      renderWorkPosition(false);
-    });
+    updateWorkArrows();
+    window.addEventListener('load', updateWorkArrows);
   }
+
+  /* Click-and-drag scrolling with a mouse. Touch (pointerType 'touch') is
+     skipped entirely so native swipe/momentum scrolling keeps working
+     exactly as it did before — this only adds the mouse case that was
+     missing.
+
+     Deliberately NOT using setPointerCapture here: capturing the pointer
+     on `track` re-targets the resulting click event to `track` itself
+     instead of the card under the cursor, which is what broke the
+     play/pause click on video cards. Tracking move/up on `document`
+     instead gets the same "drag works even if the mouse leaves the
+     strip" behaviour without hijacking the click target. */
+  (function enableWorkDrag(track){
+    if(!track) return;
+    var dragging = false, startX = 0, startScroll = 0, moved = false;
+
+    function onMove(e){
+      if(!dragging) return;
+      var dx = e.clientX - startX;
+      if(Math.abs(dx) > 4) moved = true;
+      track.scrollLeft = startScroll - dx;
+    }
+    function endDrag(){
+      if(!dragging) return;
+      dragging = false;
+      track.classList.remove('is-dragging');
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', endDrag);
+      document.removeEventListener('pointercancel', endDrag);
+      if(moved) workDragSuppressClick = true;
+    }
+    track.addEventListener('pointerdown', function(e){
+      if(e.pointerType === 'touch') return;
+      dragging = true; moved = false;
+      startX = e.clientX; startScroll = track.scrollLeft;
+      track.classList.add('is-dragging');
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', endDrag);
+      document.addEventListener('pointercancel', endDrag);
+    });
+  })(workTrack);
 
   /* Swipe-hint dots for the mobile/tablet horizontal strip (hidden by CSS once
      .work-track becomes a grid at 768px, so this is a no-op cost on desktop). */
@@ -229,14 +279,15 @@
     if(dotsIO){ workItems.forEach(function(item){ dotsIO.observe(item); }); }
   }
 
-  /* Pause a playing clip once it scrolls out of view (battery/data, not loading) */
+  /* Reset a playing clip back to its poster once it scrolls out of view
+     (battery/data, and consistent with stopWorkClip's reset-to-poster
+     behaviour above). */
   if('IntersectionObserver' in window){
     var workVideoIO = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if(!entry.isIntersecting){
-          entry.target.pause();
           var parentItem = entry.target.closest('.work-item');
-          if(parentItem) parentItem.classList.remove('is-playing');
+          if(parentItem) stopWorkClip(parentItem);
         }
       });
     }, {threshold:0.2});
@@ -291,7 +342,18 @@
         '<div class="zoom-hint"><svg class="icon" aria-hidden="true"><use href="#i-zoom"/></svg></div>'+
         '<div class="cap"><span class="cap-tag">'+metaLine+'</span><span class="cap-title">'+project.title+'</span></div>'+
       '</div>';
+    /* Focusable + keyboard-operable so the lightbox can be opened without a
+       mouse or touch — a bare div click handler alone skips keyboard users. */
+    item.setAttribute('tabindex','0');
+    item.setAttribute('role','button');
+    item.setAttribute('aria-label','Open photo: '+project.title);
     item.addEventListener('click', function(){ openLightbox(index); });
+    item.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault();
+        openLightbox(index);
+      }
+    });
     return item;
   }
   var galleryGrid = document.getElementById('galleryGrid');
@@ -302,7 +364,7 @@
   FAQS.forEach(function(f){
     var item = el('div','faq-item');
     item.innerHTML =
-      '<button type="button" class="faq-q"><span>'+f.q+'</span><svg class="icon chev" aria-hidden="true"><use href="#i-arrow" style="transform:rotate(90deg)"/></svg></button>'+
+      '<button type="button" class="faq-q"><span>'+f.q+'</span><span class="faq-toggle" aria-hidden="true"><span class="bar bar-h"></span><span class="bar bar-v"></span></span></button>'+
       '<div class="faq-panel"><div class="faq-panel-inner"><p>'+f.a+'</p></div></div>';
     item.querySelector('.faq-q').addEventListener('click', function(){
       var wasOpen = item.classList.contains('open');
@@ -378,9 +440,14 @@
     btn.classList.add('active');
     applyGalleryFilter(btn.getAttribute('data-filter'));
   });
-  // apply whichever filter is active by default on load
-  var defaultFilterBtn = document.querySelector('.filter-btn.active');
-  applyGalleryFilter(defaultFilterBtn ? defaultFilterBtn.getAttribute('data-filter') : 'all');
+  // Default filter depends on screen size: wider/landscape screens (tablet
+  // and up) start on "All", narrow mobile-portrait screens start on
+  // "Interior" — per client request.
+  var galleryDefaultFilter = window.matchMedia('(min-width:768px)').matches ? 'all' : 'interior';
+  document.querySelectorAll('.filter-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-filter') === galleryDefaultFilter);
+  });
+  applyGalleryFilter(galleryDefaultFilter);
 
   /* ---------- Lightbox ---------- */
   var lightbox = document.getElementById('lightbox');
@@ -436,6 +503,11 @@
   var quoteForm = document.getElementById('quoteForm');
   quoteForm.addEventListener('submit', function(e){
     e.preventDefault();
+    var consentBox = document.getElementById('qConsent');
+    if(consentBox && !consentBox.checked){
+      consentBox.focus();
+      return;
+    }
     var name = document.getElementById('qName').value.trim();
     var phone = document.getElementById('qPhone').value.trim();
     var service = document.getElementById('qService').value;
@@ -483,4 +555,4 @@
     footerIO.observe(footerEl);
   }
 
-})();
+})();
