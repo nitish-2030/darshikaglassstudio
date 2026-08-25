@@ -989,41 +989,6 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .footer-bottom{flex-direction:row;justify-content:space-between;text-align:left}
 }
 
-/* ============================= FLOATING UI ============================= */
-.float-stack{
-  position:fixed;right:18px;bottom:18px;z-index:90;
-  display:flex;flex-direction:column;align-items:center;gap:12px;
-  padding-bottom:env(safe-area-inset-bottom);
-  transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s linear 0s;
-}
-.float-stack.footer-near{opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s linear .3s}
-.float-btn{
-  width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  box-shadow:var(--shadow-lg);transition:transform .3s var(--ease),box-shadow .3s var(--ease);position:relative;
-}
-.float-btn:hover{transform:translateY(-3px) scale(1.05)}
-.float-btn .icon{width:24px;height:24px}
-.wa-btn{
-  position:relative;color:#fff;
-  background:linear-gradient(160deg,rgba(95,225,150,0.55),rgba(18,140,80,0.58));
-  backdrop-filter:blur(14px) saturate(180%);-webkit-backdrop-filter:blur(14px) saturate(180%);
-  border:1px solid rgba(255,255,255,0.55);
-  box-shadow:0 10px 24px rgba(18,140,80,0.45), inset 0 -7px 10px rgba(0,60,30,0.28), inset 0 2px 3px rgba(255,255,255,0.55);
-}
-.wa-btn::before{
-  content:"";position:absolute;top:9%;left:16%;width:32%;height:24%;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,0.95),rgba(255,255,255,0) 72%);
-}
-.wa-btn .pulse{position:absolute;inset:0;border-radius:50%;background:#25D366;opacity:.5;animation:pulse 2.4s ease-out infinite}
-.call-btn{background:var(--navy);color:#fff}
-.top-btn{
-  width:42px;height:42px;background:#fff;color:var(--navy);border:1px solid var(--line);
-  opacity:0;visibility:hidden;transform:translateY(8px);
-}
-.top-btn.show{opacity:1;visibility:visible;transform:translateY(0)}
-.top-btn .icon{width:18px;height:18px}
-@keyframes pulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(1.9);opacity:0}}
-
 /* Service detail modal */
 .modal{
   position:fixed;inset:0;z-index:200;background:rgba(11,20,31,0.55);backdrop-filter:blur(4px);
