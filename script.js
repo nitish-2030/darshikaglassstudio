@@ -124,17 +124,37 @@
     item.classList.remove('is-playing');
   }
 
+  /* Actually starting the network fetch for a clip — shared by both the
+     tap-to-play path and the background preload queue below, so there's
+     one place that decides "has this already started loading?" instead of
+     two copies of the same check drifting apart. */
+  function beginWorkClipLoad(item){
+    var v = item.querySelector('video');
+    if(!v) return null;
+    var src = v.querySelector('source');
+    if(!src || !src.dataset.src || v.currentSrc) return v; // already started/loaded
+    v.preload = 'auto';
+    src.src = src.dataset.src;
+    v.load();
+    return v;
+  }
+
   document.querySelectorAll('.work-item').forEach(function(item){
     var v = item.querySelector('video');
     if(!v) return;
-    var src = v.querySelector('source');
     function toggleWorkClip(){
       /* Toggle: if this clip is already playing, activating it again stops it. */
       if(!v.paused && !v.ended){
         stopWorkClip(item);
         return;
       }
-      if(src && src.dataset.src && !v.currentSrc){ src.src = src.dataset.src; v.load(); }
+      /* If this card was already quietly preloading in the background (see
+         queueWorkPreload below), beginWorkClipLoad() is a no-op here and
+         play() can start immediately off whatever's already buffered —
+         that's the whole point. If it wasn't preloaded yet (fast tap
+         before its turn in the queue came up), this is the same
+         load-then-play fallback as before. */
+      beginWorkClipLoad(item);
       document.querySelectorAll('.work-item.is-playing').forEach(function(otherItem){
         if(otherItem !== item) stopWorkClip(otherItem);
       });
@@ -155,6 +175,83 @@
         toggleWorkClip();
       }
     });
+  });
+
+  /* ---------- Background preload for clips about to be reachable ----------
+     The hero (Stage 1) already loads with top priority. This queue is
+     Stage 2 for the "Our Work" strip specifically: as a card scrolls near
+     the visible area of the strip, its clip quietly starts downloading in
+     the background — one clip at a time, never several at once — so that
+     by the time someone actually taps it, playback starts instantly
+     instead of stalling to buffer on a slow connection.
+
+     Two safety limits keep this from working against the person it's
+     meant to help:
+       1. Data Saver / a detected slow connection (2G or slower) skips this
+          entirely — those users get the plain tap-to-load behaviour from
+          before, since guessing wrong and burning their data in the
+          background would be worse than a single deliberate tap-triggered
+          load.
+       2. Only ONE clip downloads at a time (a small queue below), so
+          background loading of upcoming cards never competes with, or
+          delays, whatever's currently loading or playing. */
+  function workConnectionAllowsPreload(){
+    var conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
+    if(!conn) return true; // API not supported — assume a normal connection
+    if(conn.saveData) return false;
+    if(conn.effectiveType && /2g/.test(conn.effectiveType)) return false;
+    return true;
+  }
+
+  var workPreloadQueue = [];
+  var workPreloadBusy = false;
+
+  function processWorkPreloadQueue(){
+    if(workPreloadBusy) return;
+    var item = workPreloadQueue.shift();
+    if(!item) return;
+    var v = beginWorkClipLoad(item);
+    if(!v){ processWorkPreloadQueue(); return; }
+    workPreloadBusy = true;
+    var settled = false;
+    function next(){
+      if(settled) return;
+      settled = true;
+      v.removeEventListener('canplay', next);
+      v.removeEventListener('error', next);
+      workPreloadBusy = false;
+      processWorkPreloadQueue();
+    }
+    v.addEventListener('canplay', next, {once:true});
+    v.addEventListener('error', next, {once:true});
+    // Safety valve: move on even if neither event ever fires, so one stuck
+    // clip can't permanently block the rest of the queue.
+    setTimeout(next, 8000);
+  }
+
+  function queueWorkPreload(item){
+    var v = item.querySelector('video');
+    if(!v || v.currentSrc || item.dataset.preloadQueued) return;
+    item.dataset.preloadQueued = '1';
+    workPreloadQueue.push(item);
+    processWorkPreloadQueue();
+  }
+
+  /* Runs after the page's own load event (Stage 1 is already done by then)
+     plus a short delay, so this never competes with anything still
+     finishing up above the fold. */
+  window.addEventListener('load', function(){
+    if(!('IntersectionObserver' in window) || !workConnectionAllowsPreload()) return;
+    setTimeout(function(){
+      var workPreloadIO = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(!entry.isIntersecting) return;
+          var item = entry.target.closest('.work-item');
+          if(item) queueWorkPreload(item);
+        });
+      }, { root: workTrack, rootMargin: '0px 320px 0px 320px', threshold: 0.01 });
+      document.querySelectorAll('.work-item video').forEach(function(v){ workPreloadIO.observe(v); });
+    }, 800);
   });
 
   /* Prev/Next arrows + mouse drag, for EVERY screen size.
