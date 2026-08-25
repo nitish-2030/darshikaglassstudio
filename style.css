@@ -429,7 +429,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   color:#fff;display:flex;align-items:center;justify-content:center;
   transition:background .3s var(--ease),opacity .3s var(--ease),transform .3s var(--ease);
 }
-.work-media .clip-badge .icon{width:20px;height:20px;margin-left:3px}
+.work-media .clip-badge .icon{width:20px;height:20px;margin-left:3px;transition:opacity .2s var(--ease)}
 .work-media .clip-badge .icon-pause{display:none;margin-left:0}
 .work-item.is-playing .work-media .clip-badge{
   width:40px;height:40px;background:rgba(var(--navy-rgb),0.55);opacity:0.85;
@@ -439,6 +439,27 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
 .work-item.is-playing .work-media .clip-badge .icon-play{display:none}
 .work-item.is-playing .work-media .clip-badge .icon-pause{display:block}
 @media(hover:hover){.work-item:hover .work-media .clip-badge{transform:translate(-50%,-50%) scale(1.08)}}
+/* Buffering spinner: tap starts the fetch, and on a slow connection there's
+   a real gap before the clip has enough data to actually play. Without
+   feedback here the play icon just sits there looking unresponsive (the
+   "did my tap even register?" problem). While .is-loading is set, the
+   play/pause icon fades out and a spinning ring takes its place on the same
+   badge; it fades back out the moment the 'playing' event fires for real. */
+.work-item.is-loading .work-media .clip-badge .icon-play,
+.work-item.is-loading .work-media .clip-badge .icon-pause{opacity:0}
+.work-media .clip-spinner{
+  position:absolute;inset:8px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;
+  opacity:0;transition:opacity .2s var(--ease);
+  pointer-events:none;
+}
+.work-item.is-loading .work-media .clip-spinner{
+  opacity:1;animation:workClipSpin .8s linear infinite;
+}
+@keyframes workClipSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+  .work-item.is-loading .work-media .clip-spinner{animation:none;border-top-color:rgba(255,255,255,0.3)}
+}
 /* Swipe hint dots — mobile/tablet horizontal strip only; hidden once it becomes a grid at 768px */
 .work-dots{display:flex;justify-content:center;gap:7px;padding-top:4px;padding-bottom:4px}
 .work-dots span{width:6px;height:6px;border-radius:50%;background:var(--line-strong);transition:background .3s var(--ease),transform .3s var(--ease)}

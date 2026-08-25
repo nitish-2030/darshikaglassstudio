@@ -85,7 +85,7 @@
           '<img src="'+w.poster+'" alt="" loading="lazy">'+
           '<video muted loop playsinline preload="none" poster="'+w.poster+'"><source data-src="'+w.src+'" type="video/mp4"></video>'+
           (w.tag ? '<span class="work-tag">'+w.tag+'</span>' : '')+
-          '<span class="clip-badge"><svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg></span>'+
+          '<span class="clip-badge"><svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg><svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg><span class="clip-spinner" aria-hidden="true"></span></span>'+
         '</div>'+
         '<p class="work-caption">'+w.title+'</p>';
       /* Keyboard users need a way to reach and trigger this the same as a
@@ -122,6 +122,7 @@
     try{ v.currentTime = 0; }catch(err){}
     v.classList.remove('is-active');
     item.classList.remove('is-playing');
+    item.classList.remove('is-loading');
   }
 
   /* Actually starting the network fetch for a clip — shared by both the
@@ -142,12 +143,26 @@
   document.querySelectorAll('.work-item').forEach(function(item){
     var v = item.querySelector('video');
     if(!v) return;
+    /* Buffering feedback: 'waiting' fires whenever the video engine wants to
+       play but doesn't have enough data yet (the initial tap-to-play fetch
+       on a slow connection, or a mid-clip stall) — 'playing' fires the
+       moment real playback actually starts/resumes. Driving the spinner off
+       these two events (rather than off the click handler alone) means it
+       stays correct even if the connection stalls again after the clip was
+       already running. */
+    v.addEventListener('waiting', function(){ item.classList.add('is-loading'); });
+    v.addEventListener('playing', function(){ item.classList.remove('is-loading'); });
     function toggleWorkClip(){
       /* Toggle: if this clip is already playing, activating it again stops it. */
       if(!v.paused && !v.ended){
         stopWorkClip(item);
         return;
       }
+      /* Show the spinner the instant the tap happens rather than waiting for
+         'waiting' to fire — on a slow connection there can be a beat before
+         the browser reports it's stalled, and that gap is exactly the "did
+         my tap register?" moment we want to cover. */
+      item.classList.add('is-loading');
       /* If this card was already quietly preloading in the background (see
          queueWorkPreload below), beginWorkClipLoad() is a no-op here and
          play() can start immediately off whatever's already buffered —
@@ -158,7 +173,7 @@
       document.querySelectorAll('.work-item.is-playing').forEach(function(otherItem){
         if(otherItem !== item) stopWorkClip(otherItem);
       });
-      v.play().then(function(){ v.classList.add('is-active'); item.classList.add('is-playing'); }).catch(function(){});
+      v.play().then(function(){ v.classList.add('is-active'); item.classList.add('is-playing'); }).catch(function(){ item.classList.remove('is-loading'); });
     }
     item.addEventListener('click', function(){
       /* A click that was actually a mouse-drag (see enableWorkDrag below)
