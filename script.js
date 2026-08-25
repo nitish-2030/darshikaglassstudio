@@ -493,6 +493,7 @@
   /* ---------- Mobile menu ---------- */
   var burgerBtn = document.getElementById('burgerBtn');
   var mobileMenu = document.getElementById('mobileMenu');
+  var mmCloseBtn = document.getElementById('mmCloseBtn');
   function closeMenu(){
     mobileMenu.classList.remove('open'); nav.classList.remove('menu-open');
     burgerBtn.setAttribute('aria-expanded','false'); document.body.style.overflow='';
@@ -503,7 +504,16 @@
     burgerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.style.overflow = open ? 'hidden' : '';
   });
+  if(mmCloseBtn) mmCloseBtn.addEventListener('click', closeMenu);
   mobileMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+  /* Tapping the dimmed backdrop (anywhere outside the sliding panel
+     itself) closes the menu too — standard drawer behaviour. Checking
+     e.target === mobileMenu (not e.currentTarget) means a tap that lands
+     inside .mm-panel doesn't bubble up and accidentally close it. */
+  mobileMenu.addEventListener('click', function(e){
+    if(e.target === mobileMenu) closeMenu();
+  });
+
 
   /* ---------- Scroll reveal ---------- */
   var revealEls = document.querySelectorAll('.reveal');
@@ -571,7 +581,7 @@
   document.getElementById('lbPrev').addEventListener('click', function(){ currentIndex=(currentIndex-1+PROJECTS.length)%PROJECTS.length; renderLightbox(currentIndex); });
   document.getElementById('lbNext').addEventListener('click', function(){ currentIndex=(currentIndex+1)%PROJECTS.length; renderLightbox(currentIndex); });
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape'){ closeLightbox(); closeServiceModal(); }
+    if(e.key === 'Escape'){ closeLightbox(); closeServiceModal(); closeMenu(); }
     if(lightbox.classList.contains('open')){
       if(e.key === 'ArrowRight') document.getElementById('lbNext').click();
       if(e.key === 'ArrowLeft') document.getElementById('lbPrev').click();

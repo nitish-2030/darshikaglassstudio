@@ -212,24 +212,53 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);line-
   .nav-burger{display:none}
 }
 
-/* Mobile menu panel */
+/* Mobile menu — a side panel (drawer) sliding in from the right, like the
+   reference: brand+close pinned at the top, a compact link list below,
+   then Call/Quote buttons and the Instagram icon at the end. The whole
+   thing stacks top-to-bottom in normal flow rather than being centered or
+   forced to fill the screen — with overflow-y:auto as a safety net, that
+   means there's no scenario where an item ends up clipped, regardless of
+   how tall the content or how short the screen is. */
 .mobile-menu{
-  position:fixed;inset:0;z-index:99;background:var(--navy);
-  display:flex;flex-direction:column;justify-content:center;gap:6px;padding:32px;
-  opacity:0;visibility:hidden;transform:translateY(-8px);
-  transition:opacity .4s var(--ease),transform .4s var(--ease),visibility 0s linear .4s;
+  position:fixed;inset:0;z-index:99;
+  background:rgba(var(--navy-rgb),0.55);
+  opacity:0;visibility:hidden;
+  transition:opacity .35s var(--ease),visibility 0s linear .35s;
 }
-.mobile-menu.open{opacity:1;visibility:visible;transform:translateY(0);transition:opacity .4s var(--ease),transform .4s var(--ease)}
-.mobile-menu a{font-family:'Fraunces',serif;font-size:1.7rem;color:#fff;padding-block:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.mobile-menu .mm-actions{display:flex;flex-direction:column;gap:12px;margin-top:28px}
-.mobile-menu .mm-social{display:flex;gap:12px;margin-top:20px}
+.mobile-menu.open{opacity:1;visibility:visible;transition:opacity .35s var(--ease)}
+.mm-panel{
+  position:absolute;top:0;right:0;bottom:0;
+  width:min(320px,84vw);
+  background:var(--navy);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  box-shadow:-16px 0 40px rgba(0,0,0,0.35);
+  transform:translateX(100%);
+  transition:transform .4s var(--ease);
+}
+.mobile-menu.open .mm-panel{transform:translateX(0)}
+.mm-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:20px 22px;border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0;
+}
+.mm-brand{display:flex;align-items:center;gap:10px}
+.mm-brand span{font-size:1rem}
+.mm-close{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:38px;height:38px;color:#fff;
+}
+.mm-close .icon{width:20px;height:20px}
+.mm-links{display:flex;flex-direction:column;padding:8px 22px 4px}
+.mobile-menu a{font-family:'Fraunces',serif;font-size:1.12rem;color:#fff;padding-block:11px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.mobile-menu .mm-actions{display:flex;flex-direction:column;gap:10px;padding:20px 22px 4px}
+.mobile-menu .mm-social{display:flex;gap:12px;padding:18px 22px 24px}
 .mobile-menu .mm-social a{
-  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   border:1px solid rgba(255,255,255,0.25);color:#fff;
   transition:background .3s var(--ease),border-color .3s var(--ease)}
 .mobile-menu .mm-social a:hover{background:var(--gold);border-color:var(--gold)}
-.mobile-menu .mm-social .icon{width:19px;height:19px}
+.mobile-menu .mm-social .icon{width:18px;height:18px}
 @media(min-width:1024px){.mobile-menu{display:none}}
 
 /* ============================= HERO ============================= */
