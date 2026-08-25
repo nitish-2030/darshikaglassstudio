@@ -229,19 +229,36 @@
     if(!v){ processWorkPreloadQueue(); return; }
     workPreloadBusy = true;
     var settled = false;
-    function next(){
+    var timeoutId;
+    function settle(){
       if(settled) return;
       settled = true;
-      v.removeEventListener('canplay', next);
-      v.removeEventListener('error', next);
+      clearTimeout(timeoutId);
+      v.removeEventListener('canplay', settle);
+      v.removeEventListener('error', settle);
       workPreloadBusy = false;
       processWorkPreloadQueue();
     }
-    v.addEventListener('canplay', next, {once:true});
-    v.addEventListener('error', next, {once:true});
-    // Safety valve: move on even if neither event ever fires, so one stuck
-    // clip can't permanently block the rest of the queue.
-    setTimeout(next, 8000);
+    v.addEventListener('canplay', settle, {once:true});
+    v.addEventListener('error', settle, {once:true});
+    // Safety valve: if a clip is still not ready after 8s (typical on a
+    // slow connection), stop waiting on it AND actually cancel its
+    // in-flight download before moving to the next one. Just moving on
+    // without cancelling (the old behaviour) left the stuck download
+    // running in the background, so the "one at a time" guarantee this
+    // queue exists for broke down into several clips fetching in
+    // parallel on exactly the connections that could least afford it.
+    // Re-clearing the <source> and calling load() aborts that network
+    // request; the clip's data-src is untouched, so a real tap on it
+    // still starts a fresh, full-priority load same as always.
+    timeoutId = setTimeout(function(){
+      if(settled) return;
+      var src = v.querySelector('source');
+      if(src) src.removeAttribute('src');
+      v.removeAttribute('src');
+      v.load();
+      settle();
+    }, 8000);
   }
 
   function queueWorkPreload(item){
@@ -408,18 +425,34 @@
 
   /* ---------- Hero video (optional, connection-aware) ----------
      Stays image-only until a <source src="..."> is filled in inside #heroVideo.
-     Once you add that, it auto-skips the video on slow/data-saver connections. */
-  (function initHeroMedia(){
-    var video = document.getElementById('heroVideo');
-    var source = video.querySelector('source');
-    if(!source || !source.getAttribute('src')) return; // no video added yet — image only
-    var conn = navigator.connection || navigator.webkitConnection;
-    var isSlow = conn && (conn.saveData || /(^|-)2g$/.test(conn.effectiveType || ''));
-    if(isSlow) return;
-    video.addEventListener('canplaythrough', function(){ video.classList.add('is-active'); }, {once:true});
-    video.load();
-    video.play().catch(function(){});
-  })();
+
+     Deliberately deferred to AFTER window 'load' (not run eagerly on page
+     parse): this is a decorative background loop, not critical content, so
+     it must never compete with the page's own CSS/fonts/hero-poster for
+     bandwidth while those are still loading — that competition is what was
+     causing hero text to sit invisible until the video (or the CSS it was
+     starving) finally won the race on a slow connection.
+
+     Also broadens the slow-connection check from 2G-only to 2G/3G, since
+     on real-world Indian mobile networks "3g" self-reporting is common
+     even when the link is genuinely too slow for an autoplay background
+     video. When the Network Information API isn't supported at all (e.g.
+     Safari/iOS) this still falls back to "assume it's fine" as before —
+     only refusing the video when we can actually see it's slow, not
+     penalizing browsers we can't measure. */
+  window.addEventListener('load', function(){
+    setTimeout(function initHeroMedia(){
+      var video = document.getElementById('heroVideo');
+      var source = video.querySelector('source');
+      if(!source || !source.getAttribute('src')) return; // no video added yet — image only
+      var conn = navigator.connection || navigator.webkitConnection;
+      var isSlow = conn && (conn.saveData || /(^|-)(2g|3g)$/.test(conn.effectiveType || ''));
+      if(isSlow) return;
+      video.addEventListener('canplaythrough', function(){ video.classList.add('is-active'); }, {once:true});
+      video.load();
+      video.play().catch(function(){});
+    }, 800);
+  });
 
   /* ---------- Build Services list ---------- */
   var servicesList = document.getElementById('servicesList');
